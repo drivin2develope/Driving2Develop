@@ -211,8 +211,8 @@ async function handleUpload(userId: string, formData: FormData) {
       overallScore: overall,
       transcriptConfidence: "LOW" as const,
       tipsJson: JSON.stringify([
-        "Add an OPENAI_API_KEY to unlock transcript-based coaching (filler words, keyword adherence, closing strength) for uploads.",
-        "In the meantime, keep an eye on your pacing and pauses from the acoustic analysis below.",
+        { skill: null, tip: "Add an OPENAI_API_KEY to unlock transcript-based coaching (filler words, keyword adherence, closing strength) for uploads." },
+        { skill: null, tip: "In the meantime, keep an eye on your pacing and pauses from the acoustic analysis below." },
       ]),
       paceTimelineJson: JSON.stringify(buildEnergyTimeline(payload.amplitudeSamples || [])),
     };

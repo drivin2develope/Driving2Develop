@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, Pause, Play, Square, Info } from "lucide-react";
+import { Mic, Pause, Play, Square, Info, RotateCcw, ChevronDown } from "lucide-react";
 import { ScenarioDTO, STAGE_LABELS } from "@/lib/scenario-types";
 import { Waveform } from "@/components/Waveform";
 import {
@@ -10,14 +10,21 @@ import {
   countFillerWords,
   wordsPerMinute,
   computePaceVariance,
-  computePauses,
   keywordAdherenceScore,
   toneScore,
   clarityScore,
 } from "@/lib/analysis";
+import { initialHomeownerState, type HomeownerState, type HomeownerTurn } from "@/lib/ai/homeowner";
 import { cn } from "@/lib/utils";
 
 type WordChunk = { atMs: number; wordCount: number };
+type Checkpoint = { stage: string; atMs: number; homeownerState: HomeownerState };
+
+function pickSupportedMimeType(): string | undefined {
+  if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported) return undefined;
+  const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"];
+  return candidates.find((c) => MediaRecorder.isTypeSupported(c));
+}
 
 export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
   const router = useRouter();
@@ -27,9 +34,13 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
   const [finalTranscript, setFinalTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState("");
   const [levels, setLevels] = useState<number[]>([]);
-  const [homeownerLineIdx, setHomeownerLineIdx] = useState(-1);
   const [supportError, setSupportError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [homeownerState, setHomeownerState] = useState<HomeownerState>(() => initialHomeownerState(scenario));
+  const [homeownerLine, setHomeownerLine] = useState<string>(scenario.homeownerScript[0]?.line ?? "");
+  const [homeownerThinking, setHomeownerThinking] = useState(false);
+  const [homeownerSource, setHomeownerSource] = useState<"openai" | "rule-based" | null>(null);
+  const [showRestartMenu, setShowRestartMenu] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -47,7 +58,13 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
   const pitchSamplesRef = useRef<number[]>([]);
   const homeownerLinesShownRef = useRef<string[]>([]);
   const shouldRestartRecognitionRef = useRef(false);
-  const homeownerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const historyRef = useRef<HomeownerTurn[]>([]);
+  const pendingUtteranceRef = useRef("");
+  const utteranceDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const askingRef = useRef(false);
+  const checkpointsRef = useRef<Checkpoint[]>([]);
+  const seenStagesRef = useRef<Set<string>>(new Set());
 
   const getElapsedMs = useCallback(() => {
     if (phase === "recording") {
@@ -62,10 +79,14 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       typeof window !== "undefined" ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
     if (!SpeechRecognitionCtor) {
       setSupportError(
-        "Your browser doesn't support live speech recognition. Try the latest Chrome or Edge on desktop or Android."
+        "Live, real-time practice needs a browser with the Web Speech API (Chrome, Edge, and most Chromium-based browsers). You can still record or upload a practice conversation instead."
       );
       setPhase("unsupported");
     }
+    fetch("/api/homeowner/respond")
+      .then((r) => r.json())
+      .then((d) => setHomeownerSource(d.liveHomeownerConfigured ? "openai" : "rule-based"))
+      .catch(() => setHomeownerSource("rule-based"));
     return () => {
       cleanup();
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,8 +104,56 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
     audioCtxRef.current?.close().catch(() => {});
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
-    if (homeownerTimeoutRef.current) clearTimeout(homeownerTimeoutRef.current);
+    if (utteranceDebounceRef.current) clearTimeout(utteranceDebounceRef.current);
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+  }
+
+  async function askHomeowner(repUtterance: string) {
+    if (askingRef.current || !repUtterance.trim()) return;
+    askingRef.current = true;
+    setHomeownerThinking(true);
+    historyRef.current.push({ speaker: "rep", text: repUtterance });
+    try {
+      const res = await fetch("/api/homeowner/respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scenarioId: scenario.id,
+          state: homeownerState,
+          repUtterance,
+          fullRepTranscript: finalTranscript,
+          history: historyRef.current,
+        }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      historyRef.current.push({ speaker: "homeowner", text: data.line });
+      homeownerLinesShownRef.current.push(data.line);
+      setHomeownerLine(data.line);
+      setHomeownerState(data.state as HomeownerState);
+      setHomeownerSource(data.source);
+
+      const nextStage = (data.state as HomeownerState).stage;
+      if (nextStage && !seenStagesRef.current.has(nextStage)) {
+        seenStagesRef.current.add(nextStage);
+        checkpointsRef.current.push({ stage: nextStage, atMs: getElapsedMs(), homeownerState: data.state });
+      }
+
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(data.line);
+        utterance.rate = 0.98;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      if ((data.state as HomeownerState).finished) {
+        endSession();
+      }
+    } catch {
+      // Network hiccup - stay silent this turn rather than fabricate a line.
+    } finally {
+      askingRef.current = false;
+      setHomeownerThinking(false);
+    }
   }
 
   async function start() {
@@ -92,7 +161,6 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      // Audio analysis (waveform + amplitude + pitch-proxy samples)
       const AudioContextCtor = (window as any).AudioContext || (window as any).webkitAudioContext;
       const audioCtx: AudioContext = new AudioContextCtor();
       audioCtxRef.current = audioCtx;
@@ -102,12 +170,13 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       source.connect(analyser);
       analyserRef.current = analyser;
 
-      // MediaRecorder purely for pause/resume-accurate timing (audio discarded)
-      const recorder = new MediaRecorder(stream);
+      // MediaRecorder purely for pause/resume-accurate timing (audio discarded);
+      // dynamic codec selection per Section 8 rather than assuming one codec.
+      const mimeType = pickSupportedMimeType();
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       mediaRecorderRef.current = recorder;
       recorder.start();
 
-      // Speech recognition -> real transcript
       const SpeechRecognitionCtor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       const recognition = new SpeechRecognitionCtor();
       recognition.continuous = true;
@@ -128,6 +197,13 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
               finalTimestampsRef.current.push(atMs);
               return updated;
             });
+            pendingUtteranceRef.current = (pendingUtteranceRef.current + " " + text).trim();
+            if (utteranceDebounceRef.current) clearTimeout(utteranceDebounceRef.current);
+            utteranceDebounceRef.current = setTimeout(() => {
+              const utterance = pendingUtteranceRef.current;
+              pendingUtteranceRef.current = "";
+              askHomeowner(utterance);
+            }, 900);
           } else {
             interim += text;
           }
@@ -154,7 +230,14 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       lastResumeAtRef.current = Date.now();
       setPhase("recording");
 
-      // Sample amplitude + pitch-proxy (zero-crossing rate) periodically
+      homeownerLinesShownRef.current.push(homeownerLine);
+      historyRef.current.push({ speaker: "homeowner", text: homeownerLine });
+      if (window.speechSynthesis) {
+        const opener = new SpeechSynthesisUtterance(homeownerLine);
+        opener.rate = 0.98;
+        window.speechSynthesis.speak(opener);
+      }
+
       const freqData = new Uint8Array(analyser.frequencyBinCount);
       const timeData = new Float32Array(analyser.fftSize);
       tickIntervalRef.current = setInterval(() => {
@@ -172,35 +255,9 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
 
         setElapsedMs(getElapsedMs());
       }, 200);
-
-      scheduleHomeownerLines();
     } catch (err) {
       setSupportError("Microphone access is required for live practice. Please allow mic access and try again.");
     }
-  }
-
-  function scheduleHomeownerLines() {
-    const script = scenario.homeownerScript;
-    if (!script.length) return;
-    const totalMs = scenario.estimatedMinutes * 60 * 1000;
-    const stepMs = totalMs / (script.length + 1);
-
-    let idx = 0;
-    function playNext() {
-      if (idx >= script.length) return;
-      const line = script[idx];
-      setHomeownerLineIdx(idx);
-      homeownerLinesShownRef.current.push(line.line);
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        const utterance = new SpeechSynthesisUtterance(line.line);
-        utterance.rate = 0.98;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
-      idx++;
-      homeownerTimeoutRef.current = setTimeout(playNext, stepMs);
-    }
-    homeownerTimeoutRef.current = setTimeout(playNext, Math.min(2500, stepMs * 0.4));
   }
 
   function pause() {
@@ -214,7 +271,7 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       mediaRecorderRef.current?.pause();
     } catch {}
     if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
-    if (homeownerTimeoutRef.current) clearTimeout(homeownerTimeoutRef.current);
+    if (utteranceDebounceRef.current) clearTimeout(utteranceDebounceRef.current);
     window.speechSynthesis?.pause();
     setPhase("paused");
   }
@@ -249,6 +306,17 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
       }, 200);
     }
     setPhase("recording");
+  }
+
+  /** Reopens an earlier objection/stage: the homeowner's conversational state
+   *  rewinds to that checkpoint so the rep can retry it, but nothing already
+   *  recorded (audio, transcript, timing, evidence) is discarded. */
+  function restartObjection(checkpoint: Checkpoint) {
+    setHomeownerState(checkpoint.homeownerState);
+    setHomeownerLine(`Let's go back to that. ${STAGE_LABELS[checkpoint.stage] ?? checkpoint.stage}?`);
+    historyRef.current.push({ speaker: "homeowner", text: `[Restarting from ${STAGE_LABELS[checkpoint.stage] ?? checkpoint.stage}]` });
+    setShowRestartMenu(false);
+    if (phase === "paused") resume();
   }
 
   async function endSession() {
@@ -308,19 +376,20 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
   const minutes = Math.floor(elapsedMs / 60000);
   const seconds = Math.floor((elapsedMs % 60000) / 1000);
 
-  const currentStage = homeownerLineIdx >= 0 ? scenario.homeownerScript[homeownerLineIdx]?.stage : null;
-
   if (phase === "unsupported") {
     return (
       <div className="card p-6 max-w-lg mx-auto mt-10 text-center">
         <Info className="mx-auto text-[var(--color-orange)]" />
         <p className="text-sm mt-3">{supportError}</p>
+        <a href="/upload" className="btn-gold inline-flex mt-4 px-4 py-2 text-sm rounded-lg">
+          Upload a recording instead
+        </a>
       </div>
     );
   }
 
   return (
-    <div className="px-5 md:px-8 pb-10">
+    <div className="practice-dark px-5 md:px-8 pb-10 -mx-5 md:-mx-8 pt-5 md:pt-8 rounded-none">
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="card p-5">
@@ -335,16 +404,20 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
             </div>
 
             <p className="text-xs text-[var(--color-purple)] flex items-center gap-1.5 mb-3">
-              <Info size={12} /> Scripted practice partner - not a live conversational AI voice
+              <Info size={12} />
+              {homeownerSource === "openai"
+                ? "Live conversational AI homeowner"
+                : homeownerSource === "rule-based"
+                ? "Rule-based practice partner - reacts to what you say, but isn't a live conversational AI (add OPENAI_API_KEY for that)"
+                : "Loading practice partner…"}
             </p>
 
             <div className="rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] p-4 mb-4 min-h-[74px]">
-              <p className="text-xs text-[var(--color-purple)] font-medium mb-1">Homeowner ({scenario.personality})</p>
-              <p className="text-sm">
-                {homeownerLineIdx >= 0
-                  ? scenario.homeownerScript[homeownerLineIdx]?.line
-                  : "Listening for your opening line..."}
-              </p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs text-[var(--color-purple)] font-medium">Homeowner ({scenario.personality})</p>
+                {homeownerThinking && <span className="text-[11px] text-[var(--color-disabled)]">thinking…</span>}
+              </div>
+              <p className="text-sm">{homeownerLine || "Listening for your opening line..."}</p>
             </div>
 
             <Waveform levels={levels} active={phase === "recording"} />
@@ -355,7 +428,7 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
                 {finalTranscript}
                 <span className="text-[var(--color-secondary)]"> {interimTranscript}</span>
                 {!finalTranscript && !interimTranscript && phase === "idle" && (
-                  <span className="text-[var(--color-disabled)]">Press start and begin your pitch...</span>
+                  <span className="text-[var(--color-disabled)]">Knock on the door and begin your pitch...</span>
                 )}
               </p>
             </div>
@@ -365,38 +438,64 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
             <div className="flex items-center gap-3 mt-5">
               {phase === "idle" && (
                 <button onClick={start} className="btn-gold flex-1 py-3 text-sm flex items-center justify-center gap-2">
-                  <Mic size={16} /> Start Practice
+                  <Mic size={16} /> Knock on Door
                 </button>
               )}
               {phase === "recording" && (
                 <>
                   <button onClick={pause} className="btn-secondary flex-1 py-3 text-sm flex items-center justify-center gap-2">
-                    <Pause size={16} /> Pause
+                    <Pause size={16} /> Pause Practice
                   </button>
                   <button
                     onClick={endSession}
                     className="flex-1 py-3 text-sm rounded-lg bg-[var(--color-red)] text-white flex items-center justify-center gap-2"
                   >
-                    <Square size={16} /> End Session
+                    <Square size={16} /> End Practice
                   </button>
                 </>
               )}
               {phase === "paused" && (
                 <>
                   <button onClick={resume} className="btn-gold flex-1 py-3 text-sm flex items-center justify-center gap-2">
-                    <Play size={16} /> Resume
+                    <Play size={16} /> Resume Practice
                   </button>
+                  {checkpointsRef.current.length > 0 && (
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowRestartMenu((s) => !s)}
+                        className="btn-secondary h-full px-3 py-3 text-sm flex items-center justify-center gap-1.5"
+                        aria-haspopup="menu"
+                        aria-expanded={showRestartMenu}
+                      >
+                        <RotateCcw size={15} /> Restart Objection <ChevronDown size={13} />
+                      </button>
+                      {showRestartMenu && (
+                        <div role="menu" className="absolute bottom-full mb-2 right-0 card p-1.5 w-56 z-10">
+                          {checkpointsRef.current.map((cp, i) => (
+                            <button
+                              key={i}
+                              role="menuitem"
+                              onClick={() => restartObjection(cp)}
+                              className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-[var(--color-border)]"
+                            >
+                              {STAGE_LABELS[cp.stage] ?? cp.stage}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <button
                     onClick={endSession}
                     className="flex-1 py-3 text-sm rounded-lg bg-[var(--color-red)] text-white flex items-center justify-center gap-2"
                   >
-                    <Square size={16} /> End Session
+                    <Square size={16} /> End Practice
                   </button>
                 </>
               )}
               {(phase === "ending" || submitting) && (
                 <button disabled className="btn-gold flex-1 py-3 text-sm opacity-70">
-                  Scoring your session...
+                  Scoring your practice...
                 </button>
               )}
             </div>
@@ -411,8 +510,8 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
                   key={stage}
                   className={cn(
                     "text-xs px-3 py-1.5 rounded-full border",
-                    stage === currentStage
-                      ? "border-[var(--color-gold)] text-[var(--color-gold)] bg-[rgba(227,179,65,0.08)]"
+                    stage === homeownerState.stage
+                      ? "border-[var(--color-gold)] text-[var(--color-gold-text)] bg-[rgba(227,179,65,0.08)]"
                       : keyword.hits.includes(stage)
                       ? "border-[var(--color-green)] text-[var(--color-green)] bg-[rgba(52,211,153,0.06)]"
                       : "border-[var(--color-border)] text-[var(--color-secondary)]"
@@ -434,9 +533,10 @@ export function PracticeRecorder({ scenario }: { scenario: ScenarioDTO }) {
             <LiveMetric label="Script Adherence" value={`${keyword.score}/100`} tone={keyword.score >= 60 ? "good" : "warn"} />
             <LiveMetric label="Tone" value={`${tone}/100`} tone={tone >= 60 ? "good" : "warn"} />
             <LiveMetric label="Clarity" value={`${clarity}/100`} tone={clarity >= 60 ? "good" : "warn"} />
+            <LiveMetric label="Homeowner Trust" value={`${homeownerState.trust}/100`} tone={homeownerState.trust >= 50 ? "good" : "warn"} />
           </div>
           <p className="text-[11px] text-[var(--color-secondary)] mt-5">
-            Computed live from your real transcript and audio signal - pausing won't reset these numbers.
+            Computed live from your real transcript and audio signal - pausing does not reset these numbers.
           </p>
         </div>
       </div>

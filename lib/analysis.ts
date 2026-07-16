@@ -1,7 +1,7 @@
 /**
- * Driving2Develop Analysis Engine
+ * Driven2Develop Analysis Engine
  * ---------------------------------------------------------------------------
- * This module is the "core trick" of Driving2Develop: it turns a raw transcript +
+ * This module is the "core trick" of Driven2Develop: it turns a raw transcript +
  * timing/audio signal into a believable sales-coaching scorecard WITHOUT any
  * paid AI API. Every number here is derived from real, deterministic
  * computation over what the rep actually said (regex/keyword matching over
@@ -390,15 +390,35 @@ export const TIP_DICTIONARY: Record<string, string> = {
   talkListenRatio: "Ask more questions and leave room for the homeowner to respond - it builds trust faster than talking straight through.",
 };
 
-/** Picks the 2-3 lowest-scoring metrics and returns their canned tips. */
-export function generateTips(scores: Record<string, number | null>): string[] {
+/** Which homeowner personalities exercise each weak skill - used to recommend
+ *  a "Practice This Moment" drill scoped to a specific tip, not just the
+ *  session's single weakest category. */
+export const SKILL_TO_PERSONALITY: Record<string, string[]> = {
+  clarity: ["friendly", "busy"],
+  keywordAdherence: ["busy", "friendly"],
+  objectionHandled: ["defensive", "skeptical"],
+  closingStrength: ["analytical", "price-focused"],
+  confidence: ["friendly"],
+  pacing: ["busy"],
+  fillerWordRate: ["friendly"],
+  monotoneScore: ["skeptical"],
+  volumeVariation: ["friendly"],
+  talkListenRatio: ["defensive"],
+};
+
+export type CoachingTip = { skill: string | null; tip: string };
+
+/** Picks the 2-3 lowest-scoring metrics and returns their canned tips, each
+ *  tagged with the skill it came from so the report page can offer a
+ *  "Practice This Moment" drill scoped to that specific weak point. */
+export function generateTips(scores: Record<string, number | null>): CoachingTip[] {
   const entries = Object.entries(scores).filter(
     (entry): entry is [string, number] => typeof entry[1] === "number" && entry[0] in TIP_DICTIONARY
   );
   entries.sort((a, b) => a[1] - b[1]);
-  const picked = entries.slice(0, 3).map(([key]) => TIP_DICTIONARY[key]);
+  const picked = entries.slice(0, 3).map(([key]) => ({ skill: key, tip: TIP_DICTIONARY[key] }));
   if (picked.length === 0) {
-    return ["Solid rep overall - keep drilling to build muscle memory on your close."];
+    return [{ skill: null, tip: "Solid rep overall - keep drilling to build muscle memory on your close." }];
   }
   return picked;
 }
