@@ -1,0 +1,183 @@
+// Driving2Develop Prisma schema
+//
+// DEV: uses SQLite via the `better-sqlite3` driver adapter (no native binary
+// download required, works fully offline).
+// PROD: to switch to Postgres, change `provider = "sqlite"` below to
+// `provider = "postgresql"` and set DATABASE_URL to a Postgres connection
+// string. See README.md "Deploying to production" section for the full
+// step-by-step (this is the "one-line change" referenced there).
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  REP
+  MANAGER
+}
+
+enum Difficulty {
+  EASY
+  REALISTIC
+  HARD
+}
+
+enum SessionSource {
+  LIVE
+  UPLOAD
+}
+
+enum SessionStatus {
+  PROCESSING
+  COMPLETE
+  ERROR
+}
+
+enum Confidence {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum AssignmentStatus {
+  PENDING
+  DONE
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  passwordHash     String
+  name             String
+  role             Role     @default(REP)
+  industry         String?
+  experienceLevel  String?
+  goal             String?
+  createdAt        DateTime @default(now())
+
+  managerId        String?
+  manager          User?    @relation("ManagerToReps", fields: [managerId], references: [id])
+  reps             User[]   @relation("ManagerToReps")
+
+  sessions         PracticeSession[]
+  assignmentsMade  Assignment[]      @relation("AssignmentManager")
+  assignmentsGot   Assignment[]      @relation("AssignmentRep")
+
+  @@index([managerId])
+}
+
+model Scenario {
+  id                    String   @id @default(cuid())
+  title                 String
+  industry              String
+  difficulty             Difficulty
+  personality           String
+  description           String
+  requiredTalkingPoints String   // JSON array string
+  homeownerScript       String   // JSON array string of {stage, line}
+  estimatedMinutes      Int
+  isLocked              Boolean  @default(false)
+  createdAt             DateTime @default(now())
+
+  sessions    PracticeSession[]
+  assignments Assignment[]
+}
+
+model PracticeSession {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  scenarioId     String?
+  scenario       Scenario?     @relation(fields: [scenarioId], references: [id])
+  source         SessionSource
+  status         SessionStatus @default(PROCESSING)
+  durationSeconds Int          @default(0)
+  transcript     String?
+  createdAt      DateTime      @default(now())
+
+  metric Metric?
+
+  @@index([userId])
+  @@index([scenarioId])
+}
+
+model Metric {
+  id                     String   @id @default(cuid())
+  sessionId              String   @unique
+  session                PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  wordsPerMinute         Float    @default(0)
+  paceVariance           Float    @default(0)
+  fillerWordCount        Int      @default(0)
+  fillerWordRate         Float    @default(0)
+  pauseCount             Int      @default(0)
+  avgPauseLengthMs       Float    @default(0)
+  volumeVariation        Float    @default(0)
+  monotoneScore          Float    @default(0)
+  talkListenRatio        Float    @default(0)
+  clarityScore           Float    @default(0)
+  keywordAdherenceScore  Float    @default(0)
+  objectionHandledScore  Float?
+  closingStrengthScore   Float    @default(0)
+  confidenceScore        Float    @default(0)
+  overallScore           Float    @default(0)
+  transcriptConfidence   Confidence @default(HIGH)
+  tipsJson               String   @default("[]")
+  paceTimelineJson       String   @default("[]")
+
+  @@index([sessionId])
+}
+
+model Assignment {
+  id         String   @id @default(cuid())
+  managerId  String
+  manager    User     @relation("AssignmentManager", fields: [managerId], references: [id])
+  repId      String
+  rep        User     @relation("AssignmentRep", fields: [repId], references: [id])
+  scenarioId String?
+  scenario   Scenario? @relation(fields: [scenarioId], references: [id])
+  note       String
+  dueDate    DateTime?
+  status     AssignmentStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+
+  @@index([managerId])
+  @@index([repId])
+}
+
+// Seeded reference content: a library of common door-to-door objections and
+// the recommended way to handle each. Static-ish reference data (no per-user
+// state) so it can be queried directly by the /objections routes.
+model Objection {
+  id                  String     @id @default(cuid())
+  slug                String     @unique
+  category            String
+  title               String
+  difficulty          Difficulty @default(REALISTIC)
+  summary             String
+  whyItHappens        String
+  recommendedResponse String     // JSON array of step strings
+  exampleScript       String
+  relatedTactics      String     // JSON array of strings
+  order               Int        @default(0)
+  createdAt           DateTime   @default(now())
+}
+
+// Seeded company knowledge base / approved scripts shown in the manager
+// Playbook. Static-ish reference content.
+model PlaybookEntry {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  section   String
+  title     String
+  body      String
+  tags      String   // JSON array of strings
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}

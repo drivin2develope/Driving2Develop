@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-base: #0a0a0b;
+  --color-surface: #141416;
+  --color-elevated: #1c1c1f;
+  --color-elevated-2: #232327;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-primary: #f5f3ee;
+  --color-secondary: #9ca0a6;
+  --color-disabled: #5a5a5e;
+  --color-gold: #e3b341;
+  --color-gold-ink: #14110a;
+  --color-green: #34d399;
+  --color-red: #f87171;
+  --color-orange: #fb923c;
+  --color-blue: #60a5fa;
+  --color-purple: #a78bfa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--color-base);
+  color: var(--color-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+::selection {
+  background: rgba(227, 179, 65, 0.25);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- Accessibility: universal keyboard focus ring --------------------------- */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* Don't double up on native outlines when we set our own */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.skip-link {
+  position: fixed;
+  top: -60px;
+  left: 12px;
+  z-index: 100;
+  background: var(--color-gold);
+  color: var(--color-gold-ink);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: top 0.18s ease;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* --- Surfaces --------------------------------------------------------------- */
+.card {
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.input-field {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-primary);
+  padding: 10px 14px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input-field:hover {
+  border-color: var(--color-border-strong);
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(227, 179, 65, 0.14);
+}
+.input-field::placeholder {
+  color: var(--color-disabled);
+}
+.input-field[aria-invalid="true"] {
+  border-color: var(--color-red);
+}
+.input-field[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.16);
+}
+
+/* Legacy button classes kept so any un-migrated markup still looks right */
+.btn-gold {
+  background: var(--color-gold);
+  color: var(--color-gold-ink);
+  font-weight: 600;
+  border-radius: 8px;
+  transition: filter 0.15s ease, transform 0.08s ease;
+}
+.btn-gold:hover {
+  filter: brightness(1.08);
+}
+.btn-gold:active {
+  transform: scale(0.98);
+}
+.btn-secondary {
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+.btn-secondary:hover {
+  background: var(--color-elevated-2);
+}
+
+/* --- Motion ----------------------------------------------------------------- */
+@keyframes pulse-rec {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.animate-rec {
+  animation: pulse-rec 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(180deg, #f4d98a 0%, #e3b341 60%, #c8952b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-glow {
+  background: radial-gradient(
+    60% 60% at 50% 0%,
+    rgba(227, 179, 65, 0.12) 0%,
+    rgba(227, 179, 65, 0) 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton::after {
+    animation: none;
+  }
+}
