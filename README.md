@@ -100,6 +100,7 @@ Then open http://localhost:3000.
 
 | Role    | Email                  | Password      |
 | ------- | ---------------------- | ------------- |
+| Admin   | admin@driven2develop.dev    | password123   |
 | Manager | manager@driven2develop.dev  | password123   |
 | Rep     | rep1@driven2develop.dev     | password123   |
 | Rep     | rep2@driven2develop.dev     | password123   |
@@ -111,6 +112,34 @@ The seed also creates 6 Solar scenarios, 4-8 historical practice sessions per
 rep (mixed live/upload, spread over ~30 days, trending upward), a few
 manager-to-rep assignments, a 10-entry objection library, and an 8-entry
 company playbook - so nothing is empty on first login.
+
+## Access control (admin approval, roles, suspension)
+
+Every account has a **role** (`REP`, `MANAGER`, or `ADMIN`) and a **status**
+(`PENDING`, `ACTIVE`, or `SUSPENDED`):
+
+- **New signups require admin approval.** Anyone who signs up through
+  `/signup` is created with status `PENDING` and cannot sign in until an
+  admin approves them - the signup page tells them this explicitly instead
+  of silently failing.
+- **The very first account on a brand-new database is auto-approved as an
+  admin** (there's nobody else yet to approve them). Every signup after that
+  goes through the normal approval queue. The seed script also creates a
+  ready-to-use `admin@driven2develop.dev` account (see table above).
+- **Admins manage everyone** from **Users & Access** (`/admin/users`, linked
+  from the sidebar for admin accounts only): approve a pending signup, grant
+  or change a role, and suspend/reactivate an account - all in one screen.
+  Suspending immediately blocks that account from signing in and from every
+  protected page/API (enforced in `getCurrentUser()`, so no per-route changes
+  were needed). An admin cannot suspend or demote their own account (a
+  guard against accidental lockout).
+- **On an existing production deployment without a seeded admin**, promote
+  an existing account with:
+  ```bash
+  npm run make-admin -- someone@company.com
+  ```
+- `/admin/*` is protected the same way as `/manager/*`: middleware redirects
+  anyone without the right role away before the page ever renders.
 
 ## Deploying to production (Vercel + Postgres)
 
