@@ -8,7 +8,7 @@ import { Search, CornerDownLeft } from "lucide-react";
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function SearchTrigger({ role }: { role: "REP" | "MANAGER" }) {
+export function SearchTrigger({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function SearchTrigger({ role }: { role: "REP" | "MANAGER" }) {
   );
 }
 
-function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER"; open: boolean; onOpenChange: (o: boolean) => void }) {
+function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER" | "ADMIN"; open: boolean; onOpenChange: (o: boolean) => void }) {
   const router = useRouter();
   const reduce = useReducedMotion();
   const [query, setQuery] = useState("");

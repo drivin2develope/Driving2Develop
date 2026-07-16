@@ -20,6 +20,13 @@ datasource db {
 enum Role {
   REP
   MANAGER
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
 }
 
 enum Difficulty {
@@ -56,6 +63,7 @@ model User {
   passwordHash     String
   name             String
   role             Role     @default(REP)
+  status           UserStatus @default(ACTIVE)
   industry         String?
   experienceLevel  String?
   goal             String?

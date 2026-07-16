@@ -9,7 +9,7 @@ import { Logo } from "@/components/Logo";
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function MobileTopBar({ role }: { role: "REP" | "MANAGER" }) {
+export function MobileTopBar({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();

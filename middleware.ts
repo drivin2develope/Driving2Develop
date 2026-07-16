@@ -19,6 +19,7 @@ const PROTECTED_PREFIXES = [
   "/manager",
   "/settings",
   "/onboarding",
+  "/admin",
 ];
 
 const AUTH_PAGES = ["/login", "/signup"];
@@ -29,8 +30,11 @@ async function getSession(token: string | undefined) {
   if (!secret) return null;
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
-    if (typeof payload.userId === "string" && (payload.role === "REP" || payload.role === "MANAGER")) {
-      return { userId: payload.userId as string, role: payload.role as "REP" | "MANAGER" };
+    if (
+      typeof payload.userId === "string" &&
+      (payload.role === "REP" || payload.role === "MANAGER" || payload.role === "ADMIN")
+    ) {
+      return { userId: payload.userId as string, role: payload.role as "REP" | "MANAGER" | "ADMIN" };
     }
     return null;
   } catch {
@@ -67,6 +71,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (pathname.startsWith("/admin") && session && session.role !== "ADMIN") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 
@@ -87,6 +98,7 @@ export const config = {
     "/manager/:path*",
     "/settings/:path*",
     "/onboarding/:path*",
+    "/admin/:path*",
     "/login",
     "/signup",
   ],

@@ -422,6 +422,18 @@ async function main() {
 
   const passwordHash = await bcrypt.hash("password123", 10);
 
+  await prisma.user.upsert({
+    where: { email: "admin@driven2develop.dev" },
+    update: {},
+    create: {
+      email: "admin@driven2develop.dev",
+      name: "Site Admin",
+      passwordHash,
+      role: "ADMIN",
+      status: "ACTIVE",
+    },
+  });
+
   const manager = await prisma.user.upsert({
     where: { email: "manager@driven2develop.dev" },
     update: {},
@@ -622,6 +634,7 @@ async function main() {
   }
 
   console.log("Seed complete.");
+  console.log(`Admin: admin@driven2develop.dev / password123`);
   console.log(`Manager: manager@driven2develop.dev / password123`);
   console.log(`Reps: rep1@driven2develop.dev ... rep5@driven2develop.dev / password123`);
 }

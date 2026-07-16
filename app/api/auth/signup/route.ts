@@ -22,7 +22,13 @@ export async function POST(request: NextRequest) {
   }
 
   const passwordHash = await hashPassword(password);
-  const role = body.role === "MANAGER" ? "MANAGER" : "REP";
+
+  // Bootstrap: the very first account on a fresh install becomes an active
+  // admin (nobody else exists yet to approve them). Every signup after that
+  // requires an existing admin to approve it before the account can sign in.
+  const isFirstUser = (await prisma.user.count()) === 0;
+  const role = isFirstUser ? "ADMIN" : body.role === "MANAGER" ? "MANAGER" : "REP";
+  const status = isFirstUser ? "ACTIVE" : "PENDING";
 
   const user = await prisma.user.create({
     data: {
@@ -30,10 +36,18 @@ export async function POST(request: NextRequest) {
       name,
       passwordHash,
       role,
+      status,
     },
   });
 
-  const token = await signSession({ userId: user.id, role: user.role as "REP" | "MANAGER" });
+  if (user.status !== "ACTIVE") {
+    return NextResponse.json({
+      pending: true,
+      message: "Your account was created and is waiting on admin approval. You'll be able to sign in once it's approved.",
+    });
+  }
+
+  const token = await signSession({ userId: user.id, role: user.role as "REP" | "MANAGER" | "ADMIN" });
   await setSessionCookie(token);
 
   return NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role });

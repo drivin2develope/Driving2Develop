@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownTrigger, DropdownContent, DropdownItem, DropdownS
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function Sidebar({ user }: { user: { name: string; email: string; role: "REP" | "MANAGER" } }) {
+export function Sidebar({ user }: { user: { name: string; email: string; role: "REP" | "MANAGER" | "ADMIN" } }) {
   const pathname = usePathname();
   const router = useRouter();
   const groups = navGroupsFor(user.role);
@@ -83,7 +83,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: "
               <Avatar name={user.name} size={32} />
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-medium truncate">{user.name}</span>
-                <span className="block text-xs text-[var(--color-secondary)] truncate">{user.role === "MANAGER" ? "Manager" : "Rep"}</span>
+                <span className="block text-xs text-[var(--color-secondary)] truncate">{user.role === "ADMIN" ? "Admin" : user.role === "MANAGER" ? "Manager" : "Rep"}</span>
               </span>
               <ChevronDown size={15} className="text-[var(--color-secondary)]" />
             </button>
