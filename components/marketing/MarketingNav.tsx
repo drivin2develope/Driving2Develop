@@ -18,7 +18,7 @@ const LINKS = [
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-[rgba(10,10,11,0.72)] border-b border-[var(--color-border)]">
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--nav-blur-bg)] border-b border-[var(--color-border)]">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-5 md:px-8 h-16">
         <Logo />
         <nav className="hidden md:flex items-center gap-7 text-sm text-[var(--color-secondary)]" aria-label="Primary">

@@ -102,7 +102,7 @@ function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER";
                         <button
                           onClick={() => go(r.href)}
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-secondary)] hover:bg-white/5 hover:text-[var(--color-primary)]"
+                            "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-primary)]"
                           )}
                         >
                           <Icon size={16} />

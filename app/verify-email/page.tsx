@@ -19,9 +19,9 @@ export default function VerifyEmailPage() {
   }
 
   return (
-    <AuthShell title="Verify your email" footer={<><Link href="/login" className="text-[var(--color-gold)] font-medium">Back to sign in</Link></>}>
+    <AuthShell title="Verify your email" footer={<><Link href="/login" className="text-[var(--color-gold-text)] font-medium">Back to sign in</Link></>}>
       <div className="text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[rgba(227,179,65,0.12)] text-[var(--color-gold)]">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[rgba(227,179,65,0.12)] text-[var(--color-gold-text)]">
           <MailCheck size={22} />
         </div>
         <p className="text-sm text-[var(--color-secondary)]">

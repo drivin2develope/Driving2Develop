@@ -16,7 +16,7 @@ const PLANS = [
 
 const FAQ = [
   { q: "Do I need an API key?", a: "No. Live practice uses your browser's built-in speech recognition — no paid AI needed. Uploaded-recording transcription is an optional operator add-on." },
-  { q: "Which browsers work?", a: "Live roleplay needs the Web Speech API — Chrome and Edge on desktop or Android. Everything else works everywhere." },
+  { q: "Which browsers work?", a: "Live, real-time roleplay needs a browser with the Web Speech API (Chrome, Edge, and most Chromium-based browsers). We detect support automatically — if your browser doesn't have it, you can record or upload a practice conversation instead and get the same scorecard." },
   { q: "Can I switch plans later?", a: "Yes, upgrade or downgrade anytime. Team billing is per active rep, prorated." },
 ];
 
@@ -38,12 +38,12 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2.5 flex-1">
                 {p.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm">
-                    <Check size={16} className="text-[var(--color-gold)] mt-0.5 shrink-0" />
+                    <Check size={16} className="text-[var(--color-gold-text)] mt-0.5 shrink-0" />
                     <span className="text-[var(--color-secondary)]">{f}</span>
                   </li>
                 ))}
               </ul>
-              <Link href="/signup" className={`mt-7 text-center text-sm py-3 rounded-lg font-semibold transition ${p.featured ? "bg-[var(--color-gold)] text-[var(--color-gold-ink)] hover:brightness-110" : "border border-[var(--color-border-strong)] hover:bg-white/5"}`}>
+              <Link href="/signup" className={`mt-7 text-center text-sm py-3 rounded-lg font-semibold transition ${p.featured ? "bg-[var(--color-gold)] text-[var(--color-gold-ink)] hover:brightness-110" : "border border-[var(--color-border-strong)] hover:bg-[var(--color-border)]"}`}>
                 {p.cta}
               </Link>
             </FadeIn>

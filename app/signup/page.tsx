@@ -44,7 +44,7 @@ export default function SignupPage() {
     <AuthShell
       title="Start training free"
       subtitle="No credit card. Set up your mic and go."
-      footer={<>Already have an account? <Link href="/login" className="text-[var(--color-gold)] font-medium">Sign in</Link></>}
+      footer={<>Already have an account? <Link href="/login" className="text-[var(--color-gold-text)] font-medium">Sign in</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <TextField label="Full name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Jordan Casey" autoComplete="name" />

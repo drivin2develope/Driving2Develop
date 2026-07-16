@@ -33,7 +33,7 @@ export default async function CompliancePage() {
                   <Avatar name={f.repName} size={36} />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <Link href={`/manager/team/${f.repId}`} className="text-sm font-medium hover:text-[var(--color-gold)]">{f.repName}</Link>
+                      <Link href={`/manager/team/${f.repId}`} className="text-sm font-medium hover:text-[var(--color-gold-text)]">{f.repName}</Link>
                       <Badge color={f.severity === "high" ? "red" : "orange"}>{f.severity}</Badge>
                     </div>
                     <p className="text-sm mt-1">{f.label}</p>

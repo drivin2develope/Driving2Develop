@@ -60,7 +60,7 @@ export function MicrophoneForm() {
 
   return (
     <Card>
-      <CardHeader title="Microphone" subtitle="Choose which mic Driving2Develop uses for live practice." />
+      <CardHeader title="Microphone" subtitle="Choose which mic Driven2Develop uses for live practice." />
       {devices.length === 0 ? (
         <Button variant="secondary" onClick={loadDevices}>Detect microphones</Button>
       ) : (

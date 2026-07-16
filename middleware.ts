@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const COOKIE_NAME = "driving2develop_session";
+const COOKIE_NAME = "driven2develop_session";
 
 const PROTECTED_PREFIXES = [
   "/dashboard",

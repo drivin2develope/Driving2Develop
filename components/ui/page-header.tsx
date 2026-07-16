@@ -13,7 +13,7 @@ export function PageHeader({
     <div className="flex items-start justify-between gap-4 px-5 md:px-8 pt-6 md:pt-8 pb-5">
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold)] mb-1.5">{eyebrow}</p>
+          <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold-text)] mb-1.5">{eyebrow}</p>
         )}
         <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-primary)]">{title}</h1>
         {subtitle && <p className="text-sm text-[var(--color-secondary)] mt-1.5 max-w-2xl">{subtitle}</p>}

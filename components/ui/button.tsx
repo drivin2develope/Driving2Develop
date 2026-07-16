@@ -15,8 +15,8 @@ const VARIANTS: Record<Variant, string> = {
   secondary:
     "bg-[var(--color-elevated)] text-[var(--color-primary)] border border-[var(--color-border)] hover:bg-[var(--color-elevated2)] hover:border-[var(--color-border-strong)]",
   outline:
-    "bg-transparent text-[var(--color-primary)] border border-[var(--color-border-strong)] hover:bg-white/5",
-  ghost: "bg-transparent text-[var(--color-secondary)] hover:bg-white/5 hover:text-[var(--color-primary)]",
+    "bg-transparent text-[var(--color-primary)] border border-[var(--color-border-strong)] hover:bg-[var(--color-border)]",
+  ghost: "bg-transparent text-[var(--color-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-primary)]",
   destructive: "bg-[var(--color-red)] text-white font-semibold hover:brightness-105 active:brightness-95",
 };
 

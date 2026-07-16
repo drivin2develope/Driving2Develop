@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 
-const COOKIE_NAME = "driving2develop_session";
+const COOKIE_NAME = "driven2develop_session";
 const ALG = "HS256";
 
 function getSecretKey() {

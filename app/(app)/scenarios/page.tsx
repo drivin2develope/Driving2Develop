@@ -27,11 +27,11 @@ export default async function ScenariosPage() {
                 </div>
                 <div className="mt-4">
                   {s.isLocked ? (
-                    <button disabled className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm bg-white/5 text-[var(--color-disabled)] cursor-not-allowed">
+                    <button disabled className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm bg-[var(--color-border)] text-[var(--color-disabled)] cursor-not-allowed">
                       <Lock size={14} /> Locked — 35 more drills to unlock
                     </button>
                   ) : (
-                    <Link href={`/scenarios/${s.id}`} className="flex items-center justify-center gap-2 w-full text-center py-2.5 text-sm rounded-lg border border-[var(--color-border-strong)] hover:bg-white/5 transition-colors">
+                    <Link href={`/scenarios/${s.id}`} className="flex items-center justify-center gap-2 w-full text-center py-2.5 text-sm rounded-lg border border-[var(--color-border-strong)] hover:bg-[var(--color-border)] transition-colors">
                       View details <ArrowRight size={14} />
                     </Link>
                   )}

@@ -29,7 +29,7 @@ export function PageHero({
       <Section className="pt-16 md:pt-24 pb-14 relative">
         <FadeIn className="max-w-3xl">
           {eyebrow && (
-            <span className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold)]">{eyebrow}</span>
+            <span className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold-text)]">{eyebrow}</span>
           )}
           <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight leading-[1.08]">{title}</h1>
           {subtitle && <p className="mt-5 text-lg text-[var(--color-secondary)] max-w-2xl">{subtitle}</p>}
@@ -41,7 +41,7 @@ export function PageHero({
                 </Link>
               )}
               {secondaryCta && (
-                <Link href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] px-6 py-3 text-sm hover:bg-white/5 transition">
+                <Link href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] px-6 py-3 text-sm hover:bg-[var(--color-border)] transition">
                   {secondaryCta.label}
                 </Link>
               )}
@@ -72,7 +72,7 @@ export function FeatureGrid({ items }: { items: { icon: LucideIcon; title: strin
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {items.map((item) => (
         <FadeIn key={item.title} className="card p-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]">
             <item.icon size={20} />
           </div>
           <h3 className="font-medium mt-4">{item.title}</h3>

@@ -40,7 +40,7 @@ export default async function SkillsPage() {
                         {n.value >= 55 ? <CheckCircle2 size={15} className="text-[var(--color-green)]" /> : <Lock size={14} className="text-[var(--color-disabled)]" />}
                         {n.label}
                       </span>
-                      <span className="text-sm font-semibold text-[var(--color-gold)] tabular-nums">{n.value}</span>
+                      <span className="text-sm font-semibold text-[var(--color-gold-text)] tabular-nums">{n.value}</span>
                     </div>
                     <div className="mt-3"><ProgressBar value={n.value} color={n.value >= 70 ? "var(--color-green)" : n.value >= 45 ? "var(--color-gold)" : "var(--color-orange)"} /></div>
                     <div className="flex items-center justify-between mt-2.5">

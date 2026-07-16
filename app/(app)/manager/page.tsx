@@ -56,11 +56,11 @@ export default async function ManagerPage() {
           <Card className="lg:col-span-2 p-0 overflow-hidden">
             <div className="p-5 pb-3 flex items-center justify-between">
               <h3 className="font-medium text-sm">Team roster</h3>
-              <Link href="/manager/team" className="text-xs text-[var(--color-gold)]">Full team →</Link>
+              <Link href="/manager/team" className="text-xs text-[var(--color-gold-text)]">Full team →</Link>
             </div>
             <div className="divide-y divide-[var(--color-border)]">
               {roster.slice(0, 5).map((r) => (
-                <Link key={r.id} href={`/manager/team/${r.id}`} className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5">
+                <Link key={r.id} href={`/manager/team/${r.id}`} className="flex items-center justify-between px-5 py-3.5 hover:bg-[var(--color-border)]">
                   <div className="flex items-center gap-3">
                     <Avatar name={r.name} size={34} />
                     <div>
@@ -70,7 +70,7 @@ export default async function ManagerPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     {r.trend !== 0 && <span className={`text-xs ${r.trend > 0 ? "text-[var(--color-green)]" : "text-[var(--color-red)]"}`}>{r.trend > 0 ? "+" : ""}{r.trend}</span>}
-                    <span className="text-lg font-semibold text-[var(--color-gold)] w-8 text-right tabular-nums">{r.latestScore ?? "—"}</span>
+                    <span className="text-lg font-semibold text-[var(--color-gold-text)] w-8 text-right tabular-nums">{r.latestScore ?? "—"}</span>
                   </div>
                 </Link>
               ))}
@@ -79,7 +79,7 @@ export default async function ManagerPage() {
 
           <div className="space-y-6">
             <Card>
-              <CardHeader title={<span className="flex items-center gap-2"><AlertTriangle size={15} className="text-[var(--color-orange)]" /> Needs attention</span>} action={<Link href="/manager/compliance" className="text-xs text-[var(--color-gold)]">Flags →</Link>} />
+              <CardHeader title={<span className="flex items-center gap-2"><AlertTriangle size={15} className="text-[var(--color-orange)]" /> Needs attention</span>} action={<Link href="/manager/compliance" className="text-xs text-[var(--color-gold-text)]">Flags →</Link>} />
               {needsAttention.length === 0 ? <p className="text-sm text-[var(--color-secondary)]">Everyone&apos;s trending well — nice work.</p> : (
                 <div className="space-y-3">
                   {needsAttention.map((r) => (
@@ -99,7 +99,7 @@ export default async function ManagerPage() {
         </div>
 
         <Card>
-          <CardHeader title="Team weakness aggregation" subtitle="Lowest average scores across all recent sessions." action={<Link href="/manager/analytics" className="text-xs text-[var(--color-gold)]">Analytics →</Link>} />
+          <CardHeader title="Team weakness aggregation" subtitle="Lowest average scores across all recent sessions." action={<Link href="/manager/analytics" className="text-xs text-[var(--color-gold-text)]">Analytics →</Link>} />
           <div className="grid sm:grid-cols-3 gap-4">
             {weakestAreas.map((area) => (
               <div key={area.label} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

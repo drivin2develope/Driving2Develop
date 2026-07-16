@@ -87,7 +87,7 @@ export default async function DashboardPage() {
                 </div>
               </Card>
               <Card>
-                <CardHeader title="Focus Areas" action={<Link href="/skills" className="text-xs text-[var(--color-gold)]">Skills →</Link>} />
+                <CardHeader title="Focus Areas" action={<Link href="/skills" className="text-xs text-[var(--color-gold-text)]">Skills →</Link>} />
                 <div className="space-y-2.5">
                   {weaknesses.map((s) => (
                     <div key={s.label} className="flex items-center justify-between text-sm">
@@ -103,15 +103,15 @@ export default async function DashboardPage() {
 
         {sessions.length > 0 && (
           <Card>
-            <CardHeader title="Recent Sessions" action={<Link href="/history" className="text-xs text-[var(--color-gold)]">View all</Link>} />
+            <CardHeader title="Recent Sessions" action={<Link href="/history" className="text-xs text-[var(--color-gold-text)]">View all</Link>} />
             <div className="divide-y divide-[var(--color-border)]">
               {sessions.slice(0, 5).map((s) => (
-                <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between py-3 text-sm hover:bg-white/5 -mx-2 px-2 rounded-lg">
+                <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between py-3 text-sm hover:bg-[var(--color-border)] -mx-2 px-2 rounded-lg">
                   <div>
                     <p className="font-medium">{s.scenario?.title ?? "Uploaded recording"}</p>
                     <p className="text-xs text-[var(--color-secondary)] mt-0.5">{relativeTime(s.createdAt)} · {formatDuration(s.durationSeconds)} · {s.source}</p>
                   </div>
-                  <span className="text-lg font-semibold text-[var(--color-gold)] tabular-nums">{s.metric?.overallScore ?? "—"}</span>
+                  <span className="text-lg font-semibold text-[var(--color-gold-text)] tabular-nums">{s.metric?.overallScore ?? "—"}</span>
                 </Link>
               ))}
             </div>
