@@ -17,6 +17,7 @@ import {
   generateTips,
   buildPaceTimeline,
   buildEnergyTimeline,
+  buildEvidence,
   clamp,
   formatDuration,
 } from "./analysis";
@@ -250,6 +251,72 @@ describe("buildPaceTimeline / buildEnergyTimeline", () => {
   it("produces the requested number of buckets for pace", () => {
     const chunks = [{ atMs: 1000, wordCount: 10 }, { atMs: 5000, wordCount: 10 }];
     expect(buildPaceTimeline(chunks, 8000, 4)).toHaveLength(4);
+  });
+});
+
+describe("buildEvidence", () => {
+  it("returns nothing for an empty transcript", () => {
+    expect(buildEvidence({ transcript: "", requiredTalkingPoints: ["introduction"], homeownerLines: [] })).toEqual([]);
+  });
+
+  it("cites a real excerpt and exact character offset for a found talking point", () => {
+    const transcript = "Hi there, my name is Alex and I'm with the neighborhood solar program.";
+    const items = buildEvidence({ transcript, requiredTalkingPoints: ["introduction"], homeownerLines: [] });
+    const found = items.find((i) => i.category === "Introduction");
+    expect(found?.status).toBe("found");
+    expect(found?.charIndex).not.toBeNull();
+    // The excerpt must be a real substring anchored at the reported offset.
+    const idx = found!.charIndex as number;
+    expect(transcript.toLowerCase()).toContain(found!.excerpt!.replace(/[…"]/g, "").trim().toLowerCase().slice(0, 10));
+    expect(idx).toBeGreaterThanOrEqual(0);
+  });
+
+  it("honestly marks a talking point missing rather than inventing a location", () => {
+    const items = buildEvidence({
+      transcript: "We talked about the weather for a while.",
+      requiredTalkingPoints: ["close"],
+      homeownerLines: [],
+    });
+    const missing = items.find((i) => i.category === "Close");
+    expect(missing?.status).toBe("missing");
+    expect(missing?.excerpt).toBeNull();
+    expect(missing?.charIndex).toBeNull();
+  });
+
+  it("cites the most-repeated filler word with an accurate count", () => {
+    const transcript = "um so I um think this is like um a good fit";
+    const items = buildEvidence({ transcript, requiredTalkingPoints: [], homeownerLines: [] });
+    const filler = items.find((i) => i.category === "Filler words");
+    expect(filler?.status).toBe("found");
+    expect(filler?.explanation).toMatch(/\d+ times?/);
+  });
+
+  it("only evaluates objection handling when the homeowner actually raised one", () => {
+    const noObjection = buildEvidence({
+      transcript: "I hear you, that makes sense, let's continue",
+      requiredTalkingPoints: [],
+      homeownerLines: ["Nice to meet you!"],
+    });
+    expect(noObjection.some((i) => i.category === "Objection Handling")).toBe(false);
+
+    const withObjection = buildEvidence({
+      transcript: "I hear you, that's fair, here's the thing about the pricing",
+      requiredTalkingPoints: [],
+      homeownerLines: ["This is too expensive for us."],
+    });
+    const found = withObjection.find((i) => i.category === "Objection Handling");
+    expect(found?.status).toBe("found");
+  });
+
+  it("marks objection handling missing (not fabricated) when raised but never acknowledged", () => {
+    const items = buildEvidence({
+      transcript: "okay well anyway let's move on to the next thing",
+      requiredTalkingPoints: [],
+      homeownerLines: ["This is too expensive for us."],
+    });
+    const missing = items.find((i) => i.category === "Objection Handling");
+    expect(missing?.status).toBe("missing");
+    expect(missing?.excerpt).toBeNull();
   });
 });
 

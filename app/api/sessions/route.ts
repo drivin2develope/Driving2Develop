@@ -20,6 +20,7 @@ import {
   generateTips,
   buildPaceTimeline,
   buildEnergyTimeline,
+  buildEvidence,
 } from "@/lib/analysis";
 
 const DEFAULT_TALKING_POINTS = ["introduction", "value_prop", "objection_handling", "close"];
@@ -81,6 +82,11 @@ async function handleLive(userId: string, payload: LivePayload) {
     talkListenRatio: Math.min(talkListenRatio, 100),
   });
   const paceTimeline = buildPaceTimeline(payload.wordChunks || [], payload.durationSeconds * 1000);
+  const evidence = buildEvidence({
+    transcript,
+    requiredTalkingPoints,
+    homeownerLines: payload.homeownerLines || [],
+  });
 
   const session = await prisma.practiceSession.create({
     data: {
@@ -110,6 +116,7 @@ async function handleLive(userId: string, payload: LivePayload) {
           transcriptConfidence: "HIGH",
           tipsJson: JSON.stringify(tips),
           paceTimelineJson: JSON.stringify(paceTimeline),
+          evidenceJson: JSON.stringify(evidence),
         },
       },
     },
@@ -169,6 +176,7 @@ async function handleUpload(userId: string, formData: FormData) {
       volumeVariation,
     });
     transcriptConfidence = "HIGH";
+    const evidence = buildEvidence({ transcript, requiredTalkingPoints: DEFAULT_TALKING_POINTS, homeownerLines: [] });
     metricsData = {
       wordsPerMinute: wpm,
       paceVariance: 0,
@@ -188,6 +196,7 @@ async function handleUpload(userId: string, formData: FormData) {
       transcriptConfidence,
       tipsJson: JSON.stringify(tips),
       paceTimelineJson: JSON.stringify(buildEnergyTimeline(payload.amplitudeSamples || [])),
+      evidenceJson: JSON.stringify(evidence),
     };
   } else {
     // Acoustic-only fallback - honest about what's real vs unavailable.

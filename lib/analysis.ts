@@ -424,6 +424,164 @@ export function generateTips(scores: Record<string, number | null>): CoachingTip
 }
 
 // ---------------------------------------------------------------------------
+// Evidence: every finding traces back to a real transcript location
+// ---------------------------------------------------------------------------
+
+export type EvidenceItem = {
+  /** Human-readable category, e.g. "Filler words", "Objection handling". */
+  category: string;
+  /** Skill key (matches SKILL_TO_PERSONALITY) so a drill can be recommended. */
+  skill: string | null;
+  confidence: "HIGH" | "MEDIUM" | "LOW";
+  /** "found" = a real transcript excerpt backs this; "missing" = a real
+   *  absence (e.g. a required talking point never came up) - never a fake
+   *  location is invented for a "missing" item. */
+  status: "found" | "missing";
+  explanation: string;
+  /** Verbatim transcript excerpt around the cited moment, or null if status is "missing". */
+  excerpt: string | null;
+  /** Character offset of the cited moment within the full transcript string,
+   *  used to deep-link to the highlighted spot on the transcript page. Null
+   *  if status is "missing" (there is no real moment to point to). */
+  charIndex: number | null;
+};
+
+function excerptAround(transcript: string, index: number, matchLength: number, radius = 45): string {
+  const start = Math.max(0, index - radius);
+  const end = Math.min(transcript.length, index + matchLength + radius);
+  const prefix = start > 0 ? "…" : "";
+  const suffix = end < transcript.length ? "…" : "";
+  return prefix + transcript.slice(start, end).trim() + suffix;
+}
+
+const STAGE_EVIDENCE_LABELS: Record<string, string> = {
+  introduction: "Introduction",
+  rapport: "Rapport",
+  value_prop: "Value Prop",
+  qualifying: "Qualifying",
+  objection_handling: "Objection Handling",
+  objection: "Objection",
+  objection_2: "Objection",
+  close: "Close",
+};
+
+/**
+ * Builds real, evidence-backed findings from an actual transcript: never an
+ * opaque score with no explanation. Every "found" item cites a verbatim
+ * excerpt and its exact character offset in the transcript; every "missing"
+ * item is an honest absence, not a fabricated location.
+ */
+export function buildEvidence(input: {
+  transcript: string;
+  requiredTalkingPoints: string[];
+  homeownerLines: string[];
+}): EvidenceItem[] {
+  const { transcript, requiredTalkingPoints, homeownerLines } = input;
+  const items: EvidenceItem[] = [];
+  if (!transcript.trim()) return items;
+  const lower = transcript.toLowerCase();
+
+  // Filler words: cite the most-repeated pattern's first occurrence.
+  let worstFillerMatch: { index: number; text: string } | null = null;
+  let worstFillerCount = 0;
+  for (const pattern of FILLER_WORD_PATTERNS) {
+    const matches = [...transcript.matchAll(new RegExp(pattern.source, "gi"))];
+    if (matches.length > worstFillerCount) {
+      worstFillerCount = matches.length;
+      const first = matches[0];
+      worstFillerMatch = { index: first.index ?? 0, text: first[0] };
+    }
+  }
+  if (worstFillerMatch && worstFillerCount > 0) {
+    items.push({
+      category: "Filler words",
+      skill: "fillerWordRate",
+      confidence: worstFillerCount >= 3 ? "HIGH" : "MEDIUM",
+      status: "found",
+      explanation: `"${worstFillerMatch.text.trim()}" appears ${worstFillerCount} time${worstFillerCount === 1 ? "" : "s"} - each one is a moment you could have paused instead.`,
+      excerpt: excerptAround(transcript, worstFillerMatch.index, worstFillerMatch.text.length),
+      charIndex: worstFillerMatch.index,
+    });
+  }
+
+  // Talking points: found vs. honestly missing, each with real evidence.
+  for (const stage of requiredTalkingPoints) {
+    const label = STAGE_EVIDENCE_LABELS[stage] ?? stage;
+    const keywords = STAGE_KEYWORDS[stage] ?? [stage];
+    let hitIndex = -1;
+    let hitKeyword = "";
+    for (const kw of keywords) {
+      const idx = lower.indexOf(kw.toLowerCase());
+      if (idx !== -1 && (hitIndex === -1 || idx < hitIndex)) {
+        hitIndex = idx;
+        hitKeyword = kw;
+      }
+    }
+    if (hitIndex !== -1) {
+      items.push({
+        category: label,
+        skill: "keywordAdherence",
+        confidence: "HIGH",
+        status: "found",
+        explanation: `You covered ${label.toLowerCase()} - matched on "${hitKeyword}".`,
+        excerpt: excerptAround(transcript, hitIndex, hitKeyword.length),
+        charIndex: hitIndex,
+      });
+    } else {
+      items.push({
+        category: label,
+        skill: "keywordAdherence",
+        confidence: "HIGH",
+        status: "missing",
+        explanation: `${label} wasn't found anywhere in this transcript.`,
+        excerpt: null,
+        charIndex: null,
+      });
+    }
+  }
+
+  // Objection handling: only applicable if the homeowner actually raised one.
+  const raisedObjection = homeownerLines.some((line) =>
+    OBJECTION_TRIGGER_PHRASES.some((trigger) => line.toLowerCase().includes(trigger))
+  );
+  if (raisedObjection) {
+    let ackIndex = -1;
+    let ackWord = "";
+    for (const w of ACKNOWLEDGMENT_WORDS) {
+      const idx = lower.indexOf(w.toLowerCase());
+      if (idx !== -1 && (ackIndex === -1 || idx < ackIndex)) {
+        ackIndex = idx;
+        ackWord = w;
+      }
+    }
+    if (ackIndex !== -1) {
+      items.push({
+        category: "Objection Handling",
+        skill: "objectionHandled",
+        confidence: "MEDIUM",
+        status: "found",
+        explanation: `You acknowledged the objection ("${ackWord}") before responding - that's the right order.`,
+        excerpt: excerptAround(transcript, ackIndex, ackWord.length),
+        charIndex: ackIndex,
+      });
+    } else {
+      items.push({
+        category: "Objection Handling",
+        skill: "objectionHandled",
+        confidence: "MEDIUM",
+        status: "missing",
+        explanation:
+          'The homeowner raised an objection, but no acknowledgment language ("I hear you", "that makes sense") was found before your response.',
+        excerpt: null,
+        charIndex: null,
+      });
+    }
+  }
+
+  return items;
+}
+
+// ---------------------------------------------------------------------------
 // Timeline builders (for the report page's pace-over-time chart)
 // ---------------------------------------------------------------------------
 

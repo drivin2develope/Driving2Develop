@@ -4,9 +4,9 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { PageHeader, Card, CardHeader, Badge, StatCard, ButtonLink, ProgressRing } from "@/components/ui";
 import { PaceLineChart, ScoreCategoryBars } from "@/components/charts";
-import { formatDuration, scoreColorClass, SKILL_TO_PERSONALITY, type CoachingTip } from "@/lib/analysis";
+import { formatDuration, scoreColorClass, SKILL_TO_PERSONALITY, type CoachingTip, type EvidenceItem } from "@/lib/analysis";
 import { formatDateTime } from "@/lib/utils";
-import { ArrowRight, FileText, Lightbulb, Target } from "lucide-react";
+import { ArrowRight, FileText, Lightbulb, Target, CheckCircle2, XCircle, ExternalLink } from "lucide-react";
 
 const SKILL_LABELS: Record<string, string> = {
   objectionHandled: "Objection Handling",
@@ -46,6 +46,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
 
   const rawTips: unknown[] = JSON.parse(metric.tipsJson || "[]");
   const tips: CoachingTip[] = rawTips.map((t) => (typeof t === "string" ? { skill: null, tip: t } : (t as CoachingTip)));
+  const evidence: EvidenceItem[] = JSON.parse(metric.evidenceJson || "[]");
   const paceTimeline: { t: string; wpm: number }[] = JSON.parse(metric.paceTimelineJson || "[]");
   const categories = [
     { key: "clarity", label: "Clarity", value: metric.clarityScore },
@@ -117,6 +118,48 @@ export default async function ReportPage({ params }: { params: { id: string } })
             })}
           </ul>
         </Card>
+
+        {evidence.length > 0 && (
+          <Card>
+            <CardHeader
+              title="Evidence"
+              subtitle="Every finding here traces back to a real moment in your transcript, or is honestly marked as never happening - never an opaque score."
+            />
+            <ul className="space-y-4">
+              {evidence.map((e, i) => (
+                <li key={i} className="border border-[var(--color-border)] rounded-lg p-3.5">
+                  <div className="flex items-center justify-between gap-3 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      {e.status === "found" ? (
+                        <CheckCircle2 size={14} className="text-[var(--color-green)]" />
+                      ) : (
+                        <XCircle size={14} className="text-[var(--color-red)]" />
+                      )}
+                      <span className="text-sm font-medium">{e.category}</span>
+                      <Badge color={e.confidence === "HIGH" ? "green" : e.confidence === "MEDIUM" ? "orange" : "default"}>
+                        {e.confidence.toLowerCase()} confidence
+                      </Badge>
+                    </div>
+                    {e.status === "found" && e.charIndex !== null && session.transcript && (
+                      <Link
+                        href={`/report/${session.id}/transcript#e-${e.charIndex}`}
+                        className="shrink-0 text-xs text-[var(--color-gold-text)] inline-flex items-center gap-1 whitespace-nowrap"
+                      >
+                        View in transcript <ExternalLink size={11} />
+                      </Link>
+                    )}
+                  </div>
+                  <p className="text-sm text-[var(--color-secondary)]">{e.explanation}</p>
+                  {e.excerpt && (
+                    <p className="text-sm mt-2 pl-3 border-l-2 border-[var(--color-border-strong)] text-[var(--color-secondary)] italic">
+                      &ldquo;{e.excerpt}&rdquo;
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
 
         <Card>
           <CardHeader title="Transcript"

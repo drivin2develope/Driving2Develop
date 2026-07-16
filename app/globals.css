@@ -286,6 +286,17 @@ textarea:focus:not(:focus-visible) {
   );
 }
 
+/* --- Evidence deep-links (report -> transcript) ------------------------------
+ * Scorecard "View in transcript" links point at a real #e-<charIndex>
+ * anchor on the transcript page. :target gives a native, JS-free highlight
+ * on arrival so the exact cited moment is unmistakable. */
+.evidence-anchor:target {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+  scroll-margin-top: 90px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
