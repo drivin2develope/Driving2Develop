@@ -28,7 +28,7 @@ export default function V4PreviewPage() {
   return (
     <div className="v4-scope font-sans" data-v4-theme={theme} style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
       <V4Nav theme={theme} onToggleTheme={toggleTheme} />
-      <main>
+      <main id="main-content">
         <V4Hero />
         <V4CapabilityStrip />
         <V4PlatformSection />
@@ -48,7 +48,12 @@ export default function V4PreviewPage() {
                   <p className="text-sm mt-1.5 flex-1" style={{ color: "var(--v4-text-secondary)" }}>
                     {a.body}
                   </p>
-                  <a href={a.href} className="text-sm mt-4 inline-flex items-center gap-1" style={{ color: "var(--v4-gold-b)" }}>
+                  <a
+                    href={a.href}
+                    aria-label={`Learn more: ${a.title}`}
+                    className="text-sm mt-4 inline-flex items-center gap-1"
+                    style={{ color: "var(--v4-gold-b)" }}
+                  >
                     Learn more <ArrowRight size={14} />
                   </a>
                 </div>

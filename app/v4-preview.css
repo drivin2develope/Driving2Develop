@@ -13,7 +13,7 @@
   --v4-border-strong: rgba(255, 255, 255, 0.16);
   --v4-text: #f2efe9;
   --v4-text-secondary: #a3a7ad;
-  --v4-text-tertiary: #6b6f76;
+  --v4-text-tertiary: #888d94;
   --v4-gold-a: #7a5a1e;
   --v4-gold-b: #d4af6a;
   --v4-gold-c: #f2dfa8;
@@ -75,7 +75,7 @@
   --v4-border-strong: rgba(10, 11, 13, 0.18);
   --v4-text: #14161a;
   --v4-text-secondary: #55595e;
-  --v4-text-tertiary: #83878d;
+  --v4-text-tertiary: #5b5f65;
   --v4-gold-a: #6b4e17;
   --v4-gold-b: #8f6d24;
   --v4-gold-c: #b98a2e;
@@ -175,6 +175,17 @@
   background-image: linear-gradient(90deg, var(--v4-border-strong) 50%, transparent 50%);
   background-size: 8px 1px;
   background-repeat: repeat-x;
+}
+
+/* Focus states - one on-brand ring for every interactive element, instead of
+   the mismatched default blue outline against this dark/graphite palette. */
+.v4-scope a:focus-visible,
+.v4-scope button:focus-visible,
+.v4-scope [role="button"]:focus-visible,
+.v4-scope [tabindex]:focus-visible {
+  outline: 2px solid var(--v4-gold-b);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

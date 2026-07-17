@@ -40,7 +40,7 @@ export default function ManagerDashboardPage() {
   return (
     <div className="v4-scope font-sans" data-v4-theme={theme} style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
       <V4Nav theme={theme} onToggleTheme={toggleTheme} />
-      <main>
+      <main id="main-content">
         <section className="relative overflow-hidden" style={{ background: "var(--v4-bg)" }}>
           <div className="absolute inset-0 v4-grid-bg opacity-[0.35]" aria-hidden="true" />
           <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 pt-20 pb-4 md:pt-28">

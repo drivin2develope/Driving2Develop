@@ -13,10 +13,15 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const platformBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        platformBtnRef.current?.focus();
+      }
     }
     function onClick(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) setMenuOpen(false);
@@ -28,6 +33,14 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
       document.removeEventListener("mousedown", onClick);
     };
   }, []);
+
+  // Move focus into the menu on open so keyboard users land on its content
+  // immediately, rather than tabbing past it to the next top-level link.
+  useEffect(() => {
+    if (menuOpen) {
+      menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    }
+  }, [menuOpen]);
 
   return (
     <div ref={navRef} className="sticky top-0 z-40">
@@ -52,6 +65,7 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
 
             <nav className="hidden lg:flex items-center gap-1" aria-label="Primary">
               <button
+                ref={platformBtnRef}
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
@@ -108,6 +122,7 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
         <AnimatePresence>
         {menuOpen && (
           <motion.div
+            ref={menuRef}
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
