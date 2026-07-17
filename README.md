@@ -180,6 +180,12 @@ production needs a real Postgres database.
    swap `PrismaBetterSQLite3` for `PrismaPg` there using the same
    `DATABASE_URL`.
 
+   > **Before you commit this edit, run `npm run prisma:validate`.**
+   > A hand-edit to `schema.prisma` that isn't validated before committing is
+   > exactly how a single bad keystroke turns into a broken build - `prisma
+   > validate` catches a malformed schema in under a second, with no database
+   > connection required, before it ever reaches `main`.
+
 **3. Regenerate the client for the new provider:**
    ```bash
    npx prisma generate
