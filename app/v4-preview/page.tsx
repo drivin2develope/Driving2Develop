@@ -10,6 +10,7 @@ import { V4TransformationSequence } from "@/components/v4/V4TransformationSequen
 import { V4PlatformSection } from "@/components/v4/V4PlatformSection";
 import { V4ManagerDashboard } from "@/components/v4/V4ManagerDashboard";
 import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
+import { V4Reveal } from "@/components/v4/ui/V4Reveal";
 import { useV4Theme } from "@/components/v4/useV4Theme";
 
 const AUDIENCES = [
@@ -45,22 +46,24 @@ export default function V4PreviewPage() {
               Every role sees a different layer of the same system.
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
-              {AUDIENCES.map((a) => (
-                <div key={a.title} className="v4-diagram-node p-6 flex flex-col">
-                  <a.icon size={20} style={{ color: "var(--v4-gold-b)" }} />
-                  <h3 className="font-medium mt-4">{a.title}</h3>
-                  <p className="text-sm mt-1.5 flex-1" style={{ color: "var(--v4-text-secondary)" }}>
-                    {a.body}
-                  </p>
-                  <a
-                    href={a.href}
-                    aria-label={`Learn more: ${a.title}`}
-                    className="text-sm mt-4 inline-flex items-center gap-1"
-                    style={{ color: "var(--v4-gold-b)" }}
-                  >
-                    Learn more <ArrowRight size={14} />
-                  </a>
-                </div>
+              {AUDIENCES.map((a, i) => (
+                <V4Reveal key={a.title} index={i}>
+                  <div className="v4-diagram-node p-6 h-full flex flex-col transition-colors hover:border-[var(--v4-gold-b)]">
+                    <a.icon size={20} style={{ color: "var(--v4-gold-b)" }} />
+                    <h3 className="font-medium mt-4">{a.title}</h3>
+                    <p className="text-sm mt-1.5 flex-1" style={{ color: "var(--v4-text-secondary)" }}>
+                      {a.body}
+                    </p>
+                    <a
+                      href={a.href}
+                      aria-label={`Learn more: ${a.title}`}
+                      className="text-sm mt-4 inline-flex items-center gap-1"
+                      style={{ color: "var(--v4-gold-b)" }}
+                    >
+                      Learn more <ArrowRight size={14} />
+                    </a>
+                  </div>
+                </V4Reveal>
               ))}
             </div>
           </div>
