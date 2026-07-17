@@ -1,6 +1,6 @@
 "use client";
 
-import { Mic, MessageSquareText, Activity, Gauge as GaugeIcon, ClipboardCheck, ShieldCheck, Cpu } from "lucide-react";
+import { Mic, MessageSquareText, Activity, Gauge as GaugeIcon, ClipboardCheck, ShieldCheck, Cpu, SlidersHorizontal } from "lucide-react";
 import "../../../v4-preview.css";
 import { V4Nav } from "@/components/v4/V4Nav";
 import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
@@ -31,7 +31,7 @@ const DATA_INPUTS = [
 const MOAT = [
   { icon: Cpu, title: "Stateful, not scripted", body: "Trust and irritation carry across every turn — the same objection lands differently depending on how the conversation got there." },
   { icon: ShieldCheck, title: "Honest about its own mode", body: "Runs on a real rule-based engine by default, upgrades to an OpenAI-backed adapter when a key is configured — and always discloses which one is active." },
-  { icon: GaugeIcon, title: "Zero-dependency scoring", body: "Every score is deterministic computation over the transcript and audio signal. No paid API is required for the core product to work." },
+  { icon: SlidersHorizontal, title: "Difficulty is a starting condition, not a label", body: "Easy, Realistic, and Hard set a different starting trust baseline for the homeowner — not a cosmetic tag on an otherwise identical scenario." },
 ];
 
 export default function RoleplayPage() {
