@@ -3,6 +3,7 @@
 import { Mic, Activity, Tags, LineChart, Lightbulb, ShieldCheck, EyeOff, Layers } from "lucide-react";
 import { V4CapabilityPage } from "@/components/v4/V4CapabilityPage";
 import { V4PlatformSection } from "@/components/v4/V4PlatformSection";
+import { V4SignalStrip } from "@/components/v4/V4SignalStrip";
 
 const FLOW = [
   { icon: Mic, label: "Audio + transcript", desc: "Live speech recognition, or Whisper for uploads when configured." },
@@ -31,7 +32,12 @@ export default function ConversationIntelligencePage() {
       eyebrow="Conversation Intelligence"
       title="The analysis layer underneath every scored session."
       subtitle="Transcript, acoustic signal, and scenario context are analyzed together, then handed to the scorecard, the coach, and the manager dashboard. Try it below — click a highlighted line to see the evidence."
-      heroWide={<V4PlatformSection />}
+      heroWide={
+        <>
+          <V4SignalStrip />
+          <V4PlatformSection />
+        </>
+      }
       heroPaddingBottom="pb-4"
       flowTitle="From raw signal to a specific recommendation."
       flow={FLOW}
