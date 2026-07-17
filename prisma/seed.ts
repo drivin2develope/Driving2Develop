@@ -1,10 +1,13 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
+import { createPrismaAdapter } from "../lib/prisma-adapter";
 
+// Picks SQLite or Postgres based on DATABASE_URL (see lib/prisma-adapter.ts) -
+// previously hard-coded to SQLite here, which would have broken this script
+// against a real production Postgres database.
 const databaseUrl = process.env.DATABASE_URL ?? "file:./dev.db";
-const adapter = new PrismaBetterSQLite3({ url: databaseUrl.replace(/^file:/, "") });
+const adapter = createPrismaAdapter(databaseUrl);
 const prisma = new PrismaClient({ adapter });
 
 type HomeownerLine = { stage: string; line: string };

@@ -12,6 +12,8 @@
     "test:watch": "vitest",
     "make-admin": "tsx prisma/make-admin.ts",
     "prisma:validate": "prisma validate",
+    "db:use-sqlite": "node scripts/switch-datasource-provider.mjs sqlite",
+    "db:use-postgres": "node scripts/switch-datasource-provider.mjs postgresql",
     "postinstall": "prisma generate"
   },
   "prisma": {

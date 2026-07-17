@@ -58,56 +58,56 @@ enum AssignmentStatus {
 }
 
 model User {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  passwordHash     String
-  name             String
-  role             Role     @default(REP)
-  status           UserStatus @default(ACTIVE)
-  industry         String?
-  experienceLevel  String?
-  goal             String?
-  createdAt        DateTime @default(now())
+  id              String     @id @default(cuid())
+  email           String     @unique
+  passwordHash    String
+  name            String
+  role            Role       @default(REP)
+  status          UserStatus @default(ACTIVE)
+  industry        String?
+  experienceLevel String?
+  goal            String?
+  createdAt       DateTime   @default(now())
 
-  managerId        String?
-  manager          User?    @relation("ManagerToReps", fields: [managerId], references: [id])
-  reps             User[]   @relation("ManagerToReps")
+  managerId String?
+  manager   User?   @relation("ManagerToReps", fields: [managerId], references: [id])
+  reps      User[]  @relation("ManagerToReps")
 
-  sessions         PracticeSession[]
-  assignmentsMade  Assignment[]      @relation("AssignmentManager")
-  assignmentsGot   Assignment[]      @relation("AssignmentRep")
+  sessions        PracticeSession[]
+  assignmentsMade Assignment[]      @relation("AssignmentManager")
+  assignmentsGot  Assignment[]      @relation("AssignmentRep")
 
   @@index([managerId])
 }
 
 model Scenario {
-  id                    String   @id @default(cuid())
+  id                    String     @id @default(cuid())
   title                 String
   industry              String
-  difficulty             Difficulty
+  difficulty            Difficulty
   personality           String
   description           String
-  requiredTalkingPoints String   // JSON array string
-  homeownerScript       String   // JSON array string of {stage, line}
+  requiredTalkingPoints String // JSON array string
+  homeownerScript       String // JSON array string of {stage, line}
   estimatedMinutes      Int
-  isLocked              Boolean  @default(false)
-  createdAt             DateTime @default(now())
+  isLocked              Boolean    @default(false)
+  createdAt             DateTime   @default(now())
 
   sessions    PracticeSession[]
   assignments Assignment[]
 }
 
 model PracticeSession {
-  id             String        @id @default(cuid())
-  userId         String
-  user           User          @relation(fields: [userId], references: [id])
-  scenarioId     String?
-  scenario       Scenario?     @relation(fields: [scenarioId], references: [id])
-  source         SessionSource
-  status         SessionStatus @default(PROCESSING)
-  durationSeconds Int          @default(0)
-  transcript     String?
-  createdAt      DateTime      @default(now())
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  scenarioId      String?
+  scenario        Scenario?     @relation(fields: [scenarioId], references: [id])
+  source          SessionSource
+  status          SessionStatus @default(PROCESSING)
+  durationSeconds Int           @default(0)
+  transcript      String?
+  createdAt       DateTime      @default(now())
 
   metric Metric?
 
@@ -116,45 +116,45 @@ model PracticeSession {
 }
 
 model Metric {
-  id                     String   @id @default(cuid())
-  sessionId              String   @unique
-  session                PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  id        String          @id @default(cuid())
+  sessionId String          @unique
+  session   PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  wordsPerMinute         Float    @default(0)
-  paceVariance           Float    @default(0)
-  fillerWordCount        Int      @default(0)
-  fillerWordRate         Float    @default(0)
-  pauseCount             Int      @default(0)
-  avgPauseLengthMs       Float    @default(0)
-  volumeVariation        Float    @default(0)
-  monotoneScore          Float    @default(0)
-  talkListenRatio        Float    @default(0)
-  clarityScore           Float    @default(0)
-  keywordAdherenceScore  Float    @default(0)
-  objectionHandledScore  Float?
-  closingStrengthScore   Float    @default(0)
-  confidenceScore        Float    @default(0)
-  overallScore           Float    @default(0)
-  transcriptConfidence   Confidence @default(HIGH)
-  tipsJson               String   @default("[]")
-  paceTimelineJson       String   @default("[]")
-  evidenceJson           String   @default("[]")
+  wordsPerMinute        Float      @default(0)
+  paceVariance          Float      @default(0)
+  fillerWordCount       Int        @default(0)
+  fillerWordRate        Float      @default(0)
+  pauseCount            Int        @default(0)
+  avgPauseLengthMs      Float      @default(0)
+  volumeVariation       Float      @default(0)
+  monotoneScore         Float      @default(0)
+  talkListenRatio       Float      @default(0)
+  clarityScore          Float      @default(0)
+  keywordAdherenceScore Float      @default(0)
+  objectionHandledScore Float?
+  closingStrengthScore  Float      @default(0)
+  confidenceScore       Float      @default(0)
+  overallScore          Float      @default(0)
+  transcriptConfidence  Confidence @default(HIGH)
+  tipsJson              String     @default("[]")
+  paceTimelineJson      String     @default("[]")
+  evidenceJson          String     @default("[]")
 
   @@index([sessionId])
 }
 
 model Assignment {
-  id         String   @id @default(cuid())
+  id         String           @id @default(cuid())
   managerId  String
-  manager    User     @relation("AssignmentManager", fields: [managerId], references: [id])
+  manager    User             @relation("AssignmentManager", fields: [managerId], references: [id])
   repId      String
-  rep        User     @relation("AssignmentRep", fields: [repId], references: [id])
+  rep        User             @relation("AssignmentRep", fields: [repId], references: [id])
   scenarioId String?
-  scenario   Scenario? @relation(fields: [scenarioId], references: [id])
+  scenario   Scenario?        @relation(fields: [scenarioId], references: [id])
   note       String
   dueDate    DateTime?
   status     AssignmentStatus @default(PENDING)
-  createdAt  DateTime @default(now())
+  createdAt  DateTime         @default(now())
 
   @@index([managerId])
   @@index([repId])
@@ -171,9 +171,9 @@ model Objection {
   difficulty          Difficulty @default(REALISTIC)
   summary             String
   whyItHappens        String
-  recommendedResponse String     // JSON array of step strings
+  recommendedResponse String // JSON array of step strings
   exampleScript       String
-  relatedTactics      String     // JSON array of strings
+  relatedTactics      String // JSON array of strings
   order               Int        @default(0)
   createdAt           DateTime   @default(now())
 }
@@ -186,7 +186,7 @@ model PlaybookEntry {
   section   String
   title     String
   body      String
-  tags      String   // JSON array of strings
+  tags      String // JSON array of strings
   order     Int      @default(0)
   createdAt DateTime @default(now())
 }
