@@ -141,6 +141,23 @@ Every account has a **role** (`REP`, `MANAGER`, or `ADMIN`) and a **status**
 - `/admin/*` is protected the same way as `/manager/*`: middleware redirects
   anyone without the right role away before the page ever renders.
 
+## Environment variables
+
+This is the complete list - every `process.env.*` reference in the codebase,
+nothing more. (This app does not use NextAuth - there is no
+`NEXTAUTH_SECRET`/`NEXTAUTH_URL`/`AUTH_SECRET`; sessions are custom JWTs
+signed with `JWT_SECRET` via `jose`.)
+
+| Variable          | Required? | Purpose                                                                 | Where                    | How to get a value                                                                 | Redeploy needed after setting? |
+| ------------------ | --------- | ------------------------------------------------------------------------ | ------------------------- | ------------------------------------------------------------------------------------ | ------------------------------- |
+| `DATABASE_URL`     | **Yes**   | Prisma connection string. `file:./dev.db` locally; a real Postgres URL in production (see below). | Preview + Production, distinct values | Your Postgres provider's dashboard (Vercel Postgres, Neon, etc.) - use a **pooled** connection string if the provider offers one, since Vercel functions are serverless. | Yes |
+| `JWT_SECRET`       | **Yes**   | Signs/verifies the session cookie (`lib/auth.ts`). If unset, every authenticated request throws and the app is entirely unusable - not a partial failure. | Preview + Production, can share or differ | Generate your own: `openssl rand -base64 32`. Never reuse the local dev placeholder in `.env.example`. | Yes |
+| `OPENAI_API_KEY`   | No        | Optional upgrade: real Whisper transcription for uploads, and a real conversational AI homeowner instead of the rule-based one (`lib/stt.ts`, `lib/ai/homeowner.ts`). App works without it - just the honest, deterministic fallback instead. | Preview + Production if you want the upgrade in both | Your OpenAI account's API keys page. | Yes |
+| `NODE_ENV`         | N/A       | Set automatically by Next.js/Vercel (`production` in deployed environments). Controls the `secure` cookie flag. Never set this manually. | n/a | n/a | n/a |
+
+Never paste an actual secret value into chat, a commit, or a file tracked by
+git - only variable *names* belong in documentation or in conversation.
+
 ## Deploying to production (Vercel + Postgres)
 
 SQLite's `dev.db` file won't persist on Vercel's serverless filesystem, so
@@ -157,8 +174,15 @@ production needs a real Postgres database.
    postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
    ```
 
-**2. Switch the schema's datasource provider.** In `prisma/schema.prisma`,
-   change:
+**2. Switch the schema's datasource provider.** Run:
+   ```bash
+   npm run db:use-postgres
+   ```
+   This edits `prisma/schema.prisma` and immediately runs `prisma validate`
+   - if the result doesn't validate, the file is restored automatically and
+   nothing broken is left on disk (this replaces the old manual-edit
+   instructions after a hand-edit once reached `main` with a syntax error
+   that broke every build). Equivalent manual edit, if you prefer:
    ```prisma
    datasource db {
      provider = "sqlite"
@@ -172,19 +196,18 @@ production needs a real Postgres database.
      url      = env("DATABASE_URL")
    }
    ```
-   That's the one-line change referenced throughout this repo. `lib/db.ts`
-   already picks `@prisma/adapter-pg` automatically whenever `DATABASE_URL`
-   doesn't start with `file:`, so no other application code needs to change.
-   Also update `prisma.config.ts`'s local `adapter()` if you want CLI commands
-   (like `migrate deploy` from your own machine) to target Postgres too -
-   swap `PrismaBetterSQLite3` for `PrismaPg` there using the same
-   `DATABASE_URL`.
+   That's the one-line change referenced throughout this repo. `lib/db.ts`,
+   `prisma/seed.ts`, and `prisma.config.ts` all pick the right adapter
+   (`@prisma/adapter-pg` vs. `@prisma/adapter-better-sqlite3`) automatically
+   from `DATABASE_URL` via the shared helper in `lib/prisma-adapter.ts` - no
+   other file needs a matching manual edit.
 
-   > **Before you commit this edit, run `npm run prisma:validate`.**
-   > A hand-edit to `schema.prisma` that isn't validated before committing is
-   > exactly how a single bad keystroke turns into a broken build - `prisma
-   > validate` catches a malformed schema in under a second, with no database
-   > connection required, before it ever reaches `main`.
+   > **If you edit this by hand instead of via `npm run db:use-postgres`,
+   > run `npm run prisma:validate` before committing.** A hand-edit that
+   > isn't validated before committing is exactly how a single bad keystroke
+   > once turned into a broken build on `main` - `prisma validate` catches a
+   > malformed schema in under a second, with no database connection
+   > required.
 
 **3. Regenerate the client for the new provider:**
    ```bash
