@@ -12,6 +12,8 @@ import { V4DataGrid } from "@/components/v4/ui/V4DataGrid";
 import { V4MoatGrid } from "@/components/v4/ui/V4MoatGrid";
 import { V4ScoreGauge } from "@/components/v4/ui/V4Arc";
 import { TrendingDown } from "lucide-react";
+import { V4IntelligenceMap } from "@/components/v4/V4IntelligenceMap";
+import { V4PerformanceGraph } from "@/components/v4/V4PerformanceGraph";
 import { RelatedCapabilities } from "@/components/v4/RelatedCapabilities";
 import { useV4Theme } from "@/components/v4/useV4Theme";
 
@@ -74,6 +76,8 @@ export default function ManagerDashboardPage() {
         </section>
 
         <V4ManagerDashboard />
+        <V4IntelligenceMap />
+        <V4PerformanceGraph />
 
         <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
           <div className="max-w-[1600px] mx-auto px-6 md:px-10">
