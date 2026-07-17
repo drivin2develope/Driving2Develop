@@ -21,7 +21,7 @@ export default async function NotificationsPage() {
   const items: Notif[] = [];
 
   for (const a of assignments.filter((x) => x.status === "PENDING")) {
-    items.push({ icon: ClipboardList, color: "text-[var(--color-gold)]", title: "New assignment", body: `${a.manager.name}: ${a.note}`, when: relativeTime(a.createdAt), tag: "Assignment" });
+    items.push({ icon: ClipboardList, color: "text-[var(--color-gold-text)]", title: "New assignment", body: `${a.manager.name}: ${a.note}`, when: relativeTime(a.createdAt), tag: "Assignment" });
   }
   const achievements = computeAchievements(sessions as any).filter((a) => a.unlocked).slice(-3).reverse();
   for (const a of achievements) {
@@ -52,7 +52,7 @@ export default async function NotificationsPage() {
                 const Icon = n.icon;
                 return (
                   <div key={i} className="flex items-start gap-3.5 px-5 py-4">
-                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 ${n.color}`}><Icon size={17} /></span>
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-border)] ${n.color}`}><Icon size={17} /></span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-medium">{n.title}</p>

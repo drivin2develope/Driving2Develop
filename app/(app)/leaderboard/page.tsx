@@ -49,13 +49,13 @@ export default async function LeaderboardPage() {
         <div className="divide-y divide-[var(--color-border)]">
           {sorted.map((r, i) => (
             <div key={r.id} className={cn("flex items-center gap-4 px-5 py-3.5", r.isMe && "bg-[rgba(227,179,65,0.06)]")}>
-              <span className={cn("w-6 text-center font-semibold tabular-nums", i === 0 ? "text-[var(--color-gold)]" : "text-[var(--color-secondary)]")}>{i + 1}</span>
+              <span className={cn("w-6 text-center font-semibold tabular-nums", i === 0 ? "text-[var(--color-gold-text)]" : "text-[var(--color-secondary)]")}>{i + 1}</span>
               <Avatar name={r.name} size={34} />
               <span className="flex-1 min-w-0">
                 <span className="text-sm font-medium truncate flex items-center gap-2">{r.name} {r.isMe && <Badge color="gold">You</Badge>}</span>
                 <span className="block text-xs text-[var(--color-secondary)]">{r.sessions} sessions</span>
               </span>
-              <span className="text-lg font-semibold text-[var(--color-gold)] tabular-nums">{r[key] > 0 && key === "improvement" ? "+" : ""}{r[key]}{suffix}</span>
+              <span className="text-lg font-semibold text-[var(--color-gold-text)] tabular-nums">{r[key] > 0 && key === "improvement" ? "+" : ""}{r[key]}{suffix}</span>
             </div>
           ))}
           {sorted.length === 0 && <p className="px-5 py-8 text-center text-sm text-[var(--color-secondary)]">No ranked activity yet.</p>}

@@ -32,7 +32,7 @@ export function RadioCard({
       >
         <RRadio.Indicator className="flex h-full w-full items-center justify-center after:block after:h-2 after:w-2 after:rounded-full after:bg-[var(--color-gold)]" />
       </RRadio.Item>
-      {icon && <span className="text-[var(--color-gold)] mt-0.5">{icon}</span>}
+      {icon && <span className="text-[var(--color-gold-text)] mt-0.5">{icon}</span>}
       <span className="min-w-0">
         <span className="text-sm font-medium text-[var(--color-primary)]">{title}</span>
         {description && <span className="block text-xs text-[var(--color-secondary)] mt-0.5">{description}</span>}

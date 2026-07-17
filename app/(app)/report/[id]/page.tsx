@@ -4,17 +4,24 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { PageHeader, Card, CardHeader, Badge, StatCard, ButtonLink, ProgressRing } from "@/components/ui";
 import { PaceLineChart, ScoreCategoryBars } from "@/components/charts";
-import { formatDuration, scoreColorClass } from "@/lib/analysis";
+import { formatDuration, scoreColorClass, SKILL_TO_PERSONALITY, type CoachingTip, type EvidenceItem } from "@/lib/analysis";
 import { formatDateTime } from "@/lib/utils";
-import { ArrowRight, FileText, Lightbulb } from "lucide-react";
+import { ArrowRight, FileText, Lightbulb, Target, CheckCircle2, XCircle, ExternalLink } from "lucide-react";
 
-const METRIC_TO_PERSONALITY: Record<string, string[]> = {
-  "Objection Handling": ["defensive", "skeptical"],
-  "Closing Strength": ["analytical", "price-focused"],
-  Clarity: ["friendly", "busy"],
-  Confidence: ["friendly"],
-  "Script Adherence": ["busy", "friendly"],
+const SKILL_LABELS: Record<string, string> = {
+  objectionHandled: "Objection Handling",
+  closingStrength: "Closing Strength",
+  clarity: "Clarity",
+  confidence: "Confidence",
+  keywordAdherence: "Script Adherence",
+  pacing: "Pacing",
 };
+
+async function recommendedScenarioFor(skill: string | null) {
+  const targets = skill ? SKILL_TO_PERSONALITY[skill] ?? [] : [];
+  if (targets.length === 0) return null;
+  return prisma.scenario.findFirst({ where: { personality: { in: targets }, isLocked: false } });
+}
 
 export default async function ReportPage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
@@ -37,26 +44,28 @@ export default async function ReportPage({ params }: { params: { id: string } })
     );
   }
 
-  const tips: string[] = JSON.parse(metric.tipsJson || "[]");
+  const rawTips: unknown[] = JSON.parse(metric.tipsJson || "[]");
+  const tips: CoachingTip[] = rawTips.map((t) => (typeof t === "string" ? { skill: null, tip: t } : (t as CoachingTip)));
+  const evidence: EvidenceItem[] = JSON.parse(metric.evidenceJson || "[]");
   const paceTimeline: { t: string; wpm: number }[] = JSON.parse(metric.paceTimelineJson || "[]");
   const categories = [
-    { label: "Clarity", value: metric.clarityScore },
-    { label: "Script Adherence", value: metric.keywordAdherenceScore },
-    ...(metric.objectionHandledScore !== null ? [{ label: "Objection Handling", value: metric.objectionHandledScore }] : []),
-    { label: "Closing Strength", value: metric.closingStrengthScore },
-    { label: "Confidence", value: metric.confidenceScore },
-    { label: "Pacing", value: Math.max(0, 100 - metric.paceVariance) },
+    { key: "clarity", label: "Clarity", value: metric.clarityScore },
+    { key: "keywordAdherence", label: "Script Adherence", value: metric.keywordAdherenceScore },
+    ...(metric.objectionHandledScore !== null ? [{ key: "objectionHandled", label: "Objection Handling", value: metric.objectionHandledScore }] : []),
+    { key: "closingStrength", label: "Closing Strength", value: metric.closingStrengthScore },
+    { key: "confidence", label: "Confidence", value: metric.confidenceScore },
+    { key: "pacing", label: "Pacing", value: Math.max(0, 100 - metric.paceVariance) },
   ];
   const weakest = [...categories].sort((a, b) => a.value - b.value)[0];
-  const targets = METRIC_TO_PERSONALITY[weakest?.label] ?? [];
-  const recommended = targets.length > 0 ? await prisma.scenario.findFirst({ where: { personality: { in: targets }, isLocked: false } }) : null;
+  const recommended = await recommendedScenarioFor(weakest?.key ?? null);
+  const tipScenarios = await Promise.all(tips.map((t) => recommendedScenarioFor(t.skill)));
   const transcriptUnavailable = session.source === "UPLOAD" && !session.transcript;
 
   return (
     <div>
       <PageHeader eyebrow="Scorecard" title={session.scenario?.title ?? "Uploaded Recording"}
         subtitle={`${formatDateTime(session.createdAt)} · ${formatDuration(session.durationSeconds)} · ${session.source}`}
-        action={<ButtonLink href={`/practice/session${recommended ? `?scenarioId=${recommended.id}` : ""}`} size="sm">Practice this weakness <ArrowRight size={15} /></ButtonLink>} />
+        action={<ButtonLink href={`/practice/session${recommended ? `?scenarioId=${recommended.id}` : ""}`} size="sm">Practice This Moment <ArrowRight size={15} /></ButtonLink>} />
 
       <div className="px-5 md:px-8 pb-10 space-y-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -82,26 +91,84 @@ export default async function ReportPage({ params }: { params: { id: string } })
         </div>
 
         <Card>
-          <CardHeader title={<span className="flex items-center gap-2"><Lightbulb size={15} className="text-[var(--color-gold)]" /> Coaching Tips</span>}
-            action={<Link href="/coach" className="text-xs text-[var(--color-gold)]">Ask the coach →</Link>} />
-          <ul className="space-y-2.5">
-            {tips.map((tip, i) => (
-              <li key={i} className="flex gap-2.5 text-sm">
-                <span className="text-[var(--color-gold)] font-semibold">{i + 1}.</span>
-                <span className="text-[var(--color-secondary)]">{tip}</span>
-              </li>
-            ))}
+          <CardHeader title={<span className="flex items-center gap-2"><Lightbulb size={15} className="text-[var(--color-gold-text)]" /> Coaching Tips</span>}
+            action={<Link href="/coach" className="text-xs text-[var(--color-gold-text)]">Ask the coach →</Link>} />
+          <ul className="space-y-3">
+            {tips.map((t, i) => {
+              const scenario = tipScenarios[i];
+              return (
+                <li key={i} className="flex items-start justify-between gap-3 text-sm">
+                  <div className="flex gap-2.5">
+                    <span className="text-[var(--color-gold-text)] font-semibold">{i + 1}.</span>
+                    <span className="text-[var(--color-secondary)]">
+                      {t.skill && <span className="text-xs uppercase tracking-wide text-[var(--color-disabled)] mr-1.5">{SKILL_LABELS[t.skill] ?? t.skill}</span>}
+                      {t.tip}
+                    </span>
+                  </div>
+                  {scenario && (
+                    <Link
+                      href={`/practice/session?scenarioId=${scenario.id}`}
+                      className="shrink-0 text-xs text-[var(--color-gold-text)] inline-flex items-center gap-1 whitespace-nowrap"
+                    >
+                      <Target size={12} /> Practice This Moment
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </Card>
+
+        {evidence.length > 0 && (
+          <Card>
+            <CardHeader
+              title="Evidence"
+              subtitle="Every finding here traces back to a real moment in your transcript, or is honestly marked as never happening - never an opaque score."
+            />
+            <ul className="space-y-4">
+              {evidence.map((e, i) => (
+                <li key={i} className="border border-[var(--color-border)] rounded-lg p-3.5">
+                  <div className="flex items-center justify-between gap-3 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      {e.status === "found" ? (
+                        <CheckCircle2 size={14} className="text-[var(--color-green)]" />
+                      ) : (
+                        <XCircle size={14} className="text-[var(--color-red)]" />
+                      )}
+                      <span className="text-sm font-medium">{e.category}</span>
+                      <Badge color={e.confidence === "HIGH" ? "green" : e.confidence === "MEDIUM" ? "orange" : "default"}>
+                        {e.confidence.toLowerCase()} confidence
+                      </Badge>
+                    </div>
+                    {e.status === "found" && e.charIndex !== null && session.transcript && (
+                      <Link
+                        href={`/report/${session.id}/transcript#e-${e.charIndex}`}
+                        className="shrink-0 text-xs text-[var(--color-gold-text)] inline-flex items-center gap-1 whitespace-nowrap"
+                      >
+                        View in transcript <ExternalLink size={11} />
+                      </Link>
+                    )}
+                  </div>
+                  <p className="text-sm text-[var(--color-secondary)]">{e.explanation}</p>
+                  {e.excerpt && (
+                    <p className="text-sm mt-2 pl-3 border-l-2 border-[var(--color-border-strong)] text-[var(--color-secondary)] italic">
+                      &ldquo;{e.excerpt}&rdquo;
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
 
         <Card>
           <CardHeader title="Transcript"
             action={<div className="flex items-center gap-3">
               <Badge color={metric.transcriptConfidence === "HIGH" ? "green" : metric.transcriptConfidence === "MEDIUM" ? "orange" : "default"}>{metric.transcriptConfidence} confidence</Badge>
-              {!transcriptUnavailable && session.transcript && <Link href={`/report/${session.id}/transcript`} className="text-xs text-[var(--color-gold)] inline-flex items-center gap-1"><FileText size={13} /> Full view</Link>}
+              {!transcriptUnavailable && session.transcript && <Link href={`/report/${session.id}/transcript`} className="text-xs text-[var(--color-gold-text)] inline-flex items-center gap-1"><FileText size={13} /> Full view</Link>}
             </div>} />
           {transcriptUnavailable ? (
-            <p className="text-sm text-[var(--color-secondary)]">Transcript unavailable — this requires speech-to-text. Add an <code className="px-1 py-0.5 rounded bg-white/5">OPENAI_API_KEY</code> to unlock automatically on future uploads.</p>
+            <p className="text-sm text-[var(--color-secondary)]">Transcript unavailable — this requires speech-to-text. Add an <code className="px-1 py-0.5 rounded bg-[var(--color-border)]">OPENAI_API_KEY</code> to unlock automatically on future uploads.</p>
           ) : session.transcript ? (
             <p className="text-sm leading-relaxed text-[var(--color-secondary)] line-clamp-4">{session.transcript}</p>
           ) : (

@@ -114,7 +114,7 @@ export function UploadFlow() {
               return (
                 <div key={s.key} className="flex items-center gap-3 text-sm">
                   {done ? <CheckCircle2 size={18} className="text-[var(--color-green)]" />
-                    : active ? <Loader2 size={18} className="animate-spin text-[var(--color-gold)]" />
+                    : active ? <Loader2 size={18} className="animate-spin text-[var(--color-gold-text)]" />
                     : <Circle size={18} className="text-[var(--color-disabled)]" />}
                   <span className={done || active ? "text-[var(--color-primary)]" : "text-[var(--color-secondary)]"}>{s.label}</span>
                 </div>
@@ -136,7 +136,7 @@ export function UploadFlow() {
         <input ref={inputRef} type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/x-m4a,.mp3,.wav,.m4a" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         {file ? (
           <>
-            <FileAudio className="text-[var(--color-gold)]" size={28} />
+            <FileAudio className="text-[var(--color-gold-text)]" size={28} />
             <p className="text-sm font-medium mt-3">{file.name}</p>
             <p className="text-xs text-[var(--color-secondary)] mt-1">{(file.size / 1024 / 1024).toFixed(1)} MB — click to change</p>
           </>
@@ -161,7 +161,7 @@ export function UploadFlow() {
       <Card className="mt-6 text-xs text-[var(--color-secondary)] leading-relaxed">
         Duration, pacing, pauses and volume come from real signal processing on the audio you upload. Transcript-based
         coaching (filler words, keyword adherence) requires speech-to-text — if an
-        <code className="mx-1 px-1 py-0.5 rounded bg-white/5">OPENAI_API_KEY</code> is configured on the server, this upgrades
+        <code className="mx-1 px-1 py-0.5 rounded bg-[var(--color-border)]">OPENAI_API_KEY</code> is configured on the server, this upgrades
         automatically. Otherwise those fields show as unavailable rather than guessed.
       </Card>
     </div>

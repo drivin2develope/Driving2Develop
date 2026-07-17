@@ -27,7 +27,7 @@ export function DropdownItem({ className, children, ...props }: React.ComponentP
   return (
     <RDropdown.Item
       className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-[var(--color-secondary)] outline-none cursor-pointer data-[highlighted]:bg-white/5 data-[highlighted]:text-[var(--color-primary)]",
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-[var(--color-secondary)] outline-none cursor-pointer data-[highlighted]:bg-[var(--color-border)] data-[highlighted]:text-[var(--color-primary)]",
         className
       )}
       {...props}

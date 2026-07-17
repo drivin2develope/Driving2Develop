@@ -14,6 +14,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,6 +31,10 @@ export default function SignupPage() {
         setError(data.error || "Something went wrong.");
         return;
       }
+      if (data.pending) {
+        setPendingMessage(data.message as string);
+        return;
+      }
       toast({ kind: "success", title: "Account created", description: "Let's set up your training." });
       router.push("/onboarding/role");
       router.refresh();
@@ -40,11 +45,23 @@ export default function SignupPage() {
     }
   }
 
+  if (pendingMessage) {
+    return (
+      <AuthShell
+        title="Almost there"
+        subtitle="Your account is waiting on approval."
+        footer={<>Already approved? <Link href="/login" className="text-[var(--color-gold-text)] font-medium">Sign in</Link></>}
+      >
+        <p className="text-sm text-[var(--color-secondary)]">{pendingMessage}</p>
+      </AuthShell>
+    );
+  }
+
   return (
     <AuthShell
       title="Start training free"
       subtitle="No credit card. Set up your mic and go."
-      footer={<>Already have an account? <Link href="/login" className="text-[var(--color-gold)] font-medium">Sign in</Link></>}
+      footer={<>Already have an account? <Link href="/login" className="text-[var(--color-gold-text)] font-medium">Sign in</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <TextField label="Full name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Jordan Casey" autoComplete="name" />

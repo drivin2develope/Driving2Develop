@@ -38,7 +38,7 @@ function LoginForm() {
       <TextField label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="email" />
       <div>
         <TextField label="Password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
-        <div className="text-right mt-1.5"><Link href="/forgot-password" className="text-xs text-[var(--color-secondary)] hover:text-[var(--color-gold)]">Forgot password?</Link></div>
+        <div className="text-right mt-1.5"><Link href="/forgot-password" className="text-xs text-[var(--color-secondary)] hover:text-[var(--color-gold-text)]">Forgot password?</Link></div>
       </div>
       {error && <p className="text-sm text-[var(--color-red)]" role="alert">{error}</p>}
       <Button type="submit" loading={loading} className="w-full">{loading ? "Signing in…" : "Sign in"}</Button>
@@ -49,13 +49,10 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to keep drilling."
-      footer={<>Don&apos;t have an account? <Link href="/signup" className="text-[var(--color-gold)] font-medium">Start training</Link></>}>
+      footer={<>Don&apos;t have an account? <Link href="/signup" className="text-[var(--color-gold-text)] font-medium">Start training</Link></>}>
       <Suspense fallback={<div className="h-52" />}>
         <LoginForm />
       </Suspense>
-      <p className="text-xs text-[var(--color-disabled)] text-center mt-5 border-t border-[var(--color-border)] pt-4">
-        Demo login: manager@driving2develop.dev / password123
-      </p>
     </AuthShell>
   );
 }

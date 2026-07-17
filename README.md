@@ -1,10 +1,12 @@
-# Driving2Develop
+# Driven2Develop
 
-Driving2Develop is an AI-flavored sales training platform for door-to-door reps. Reps
-run live, mic-on roleplays against a scripted homeowner personality, get a
-real scorecard on their pace/tone/filler-words/closing, and drill their
-weakest skill. Managers get a team roster, a "needs attention" panel, and can
-assign drills.
+Driven2Develop helps door-to-door teams practice realistic conversations,
+understand exactly where trust is gained or lost, and turn every weakness
+into the next drill. Reps run live, mic-on roleplays against a reactive
+homeowner practice partner, get a real scorecard on their pace/tone/filler
+words/closing, and jump straight into a targeted drill for their weakest
+skill via **Practice This Moment**. Managers get a team roster, a "needs
+attention" panel, and can assign drills.
 
 The app spans ~57 distinct routes across a marketing site, auth, a
 step-by-step onboarding flow, the rep app, and a manager cockpit — all built
@@ -38,9 +40,22 @@ reveals, modal/toast enter-exit, and micro-interactions (all gated behind
   volume variation are all computed from that real transcript + real audio
   signal (Web Audio `AnalyserNode`), using the scoring logic in
   `lib/analysis.ts`. Nothing here is a random number.
-- **The homeowner is a scripted practice partner**, not a live conversational
-  AI voice model. Its lines are pre-written per scenario and read aloud via
-  the browser's free `speechSynthesis` API. The UI says this explicitly.
+- **The homeowner reacts to what you actually say, behind a swappable adapter**
+  (`lib/ai/homeowner.ts`). By default it runs a deterministic rule-based
+  adapter: trust/irritation move based on rapport language, questions asked,
+  and pushiness detected in your live transcript, and the homeowner can end
+  the conversation early if you push too hard. Add an `OPENAI_API_KEY` and it
+  automatically upgrades to a real conversational model (OpenAI chat
+  completions) for the same role, no code changes needed. The UI always
+  discloses which mode is active - never claims a live AI voice when it isn't
+  wired up. Lines are still read aloud via the browser's free
+  `speechSynthesis` API.
+- **Restart Objection** reopens an earlier stage/objection mid-session (the
+  homeowner's conversational state rewinds) without discarding anything
+  already recorded - audio, transcript, timing, and evidence all stay intact.
+- **Practice This Moment** appears next to each coaching tip and the overall
+  scorecard action; it launches a scenario matched to that specific weak
+  skill, not just a generic "redo the scenario" link.
 - **Uploaded recordings**: duration, pause detection, and volume come from
   real signal processing (`AudioContext.decodeAudioData` + RMS energy
   envelopes) - genuinely real, not faked. However, there is no bundled
@@ -85,17 +100,46 @@ Then open http://localhost:3000.
 
 | Role    | Email                  | Password      |
 | ------- | ---------------------- | ------------- |
-| Manager | manager@driving2develop.dev  | password123   |
-| Rep     | rep1@driving2develop.dev     | password123   |
-| Rep     | rep2@driving2develop.dev     | password123   |
-| Rep     | rep3@driving2develop.dev     | password123   |
-| Rep     | rep4@driving2develop.dev     | password123   |
-| Rep     | rep5@driving2develop.dev     | password123   |
+| Admin   | admin@driven2develop.dev    | password123   |
+| Manager | manager@driven2develop.dev  | password123   |
+| Rep     | rep1@driven2develop.dev     | password123   |
+| Rep     | rep2@driven2develop.dev     | password123   |
+| Rep     | rep3@driven2develop.dev     | password123   |
+| Rep     | rep4@driven2develop.dev     | password123   |
+| Rep     | rep5@driven2develop.dev     | password123   |
 
 The seed also creates 6 Solar scenarios, 4-8 historical practice sessions per
 rep (mixed live/upload, spread over ~30 days, trending upward), a few
 manager-to-rep assignments, a 10-entry objection library, and an 8-entry
 company playbook - so nothing is empty on first login.
+
+## Access control (admin approval, roles, suspension)
+
+Every account has a **role** (`REP`, `MANAGER`, or `ADMIN`) and a **status**
+(`PENDING`, `ACTIVE`, or `SUSPENDED`):
+
+- **New signups require admin approval.** Anyone who signs up through
+  `/signup` is created with status `PENDING` and cannot sign in until an
+  admin approves them - the signup page tells them this explicitly instead
+  of silently failing.
+- **The very first account on a brand-new database is auto-approved as an
+  admin** (there's nobody else yet to approve them). Every signup after that
+  goes through the normal approval queue. The seed script also creates a
+  ready-to-use `admin@driven2develop.dev` account (see table above).
+- **Admins manage everyone** from **Users & Access** (`/admin/users`, linked
+  from the sidebar for admin accounts only): approve a pending signup, grant
+  or change a role, and suspend/reactivate an account - all in one screen.
+  Suspending immediately blocks that account from signing in and from every
+  protected page/API (enforced in `getCurrentUser()`, so no per-route changes
+  were needed). An admin cannot suspend or demote their own account (a
+  guard against accidental lockout).
+- **On an existing production deployment without a seeded admin**, promote
+  an existing account with:
+  ```bash
+  npm run make-admin -- someone@company.com
+  ```
+- `/admin/*` is protected the same way as `/manager/*`: middleware redirects
+  anyone without the right role away before the page ever renders.
 
 ## Deploying to production (Vercel + Postgres)
 
@@ -171,7 +215,7 @@ production needs a real Postgres database.
 ## Connecting a GoDaddy domain
 
 1. In your Vercel project, go to **Settings -> Domains** and add your domain
-   (e.g. `driving2develop.yourcompany.com` or the bare `yourcompany.com`).
+   (e.g. `driven2develop.yourcompany.com` or the bare `yourcompany.com`).
 2. In GoDaddy, open **My Products -> DNS -> Manage** for that domain.
 3. Add these records (default TTL is fine):
    - **A record**, host `@`, points to `76.76.21.21`

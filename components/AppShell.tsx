@@ -7,7 +7,7 @@ export function AppShell({
   user,
   children,
 }: {
-  user: { name: string; email: string; role: "REP" | "MANAGER" };
+  user: { name: string; email: string; role: "REP" | "MANAGER" | "ADMIN" };
   children: React.ReactNode;
 }) {
   return (

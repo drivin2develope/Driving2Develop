@@ -54,14 +54,14 @@ export function HistoryTable({ sessions }: { sessions: SessionRow[] }) {
       <Card className="p-0 overflow-hidden">
         <div className="divide-y divide-[var(--color-border)]">
           {filtered.map((s) => (
-            <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between px-5 py-4 text-sm hover:bg-white/5 transition-colors">
+            <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between px-5 py-4 text-sm hover:bg-[var(--color-border)] transition-colors">
               <div className="min-w-0">
                 <p className="font-medium truncate">{s.scenario?.title ?? "Uploaded recording"}</p>
                 <p className="text-xs text-[var(--color-secondary)] mt-0.5">{formatDateTime(s.createdAt)} · {formatDuration(s.durationSeconds)}</p>
               </div>
               <div className="flex items-center gap-4 shrink-0 ml-3">
                 <Badge color={s.source === "LIVE" ? "blue" : "purple"}>{s.source}</Badge>
-                <span className="text-lg font-semibold text-[var(--color-gold)] w-8 text-right tabular-nums">{s.metric?.overallScore ?? "—"}</span>
+                <span className="text-lg font-semibold text-[var(--color-gold-text)] w-8 text-right tabular-nums">{s.metric?.overallScore ?? "—"}</span>
                 <ArrowRight size={14} className="text-[var(--color-secondary)]" />
               </div>
             </Link>

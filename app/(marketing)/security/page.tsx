@@ -6,7 +6,7 @@ export const metadata = { title: "Security & Trust" };
 export default function SecurityPage() {
   return (
     <>
-      <PageHero eyebrow="Trust center" title="Your reps' voices stay your reps'." subtitle="How Driving2Develop handles data, access and privacy — in plain language." />
+      <PageHero eyebrow="Trust center" title="Your reps' voices stay your reps'." subtitle="How Driven2Develop handles data, access and privacy — in plain language." />
       <Section className="pb-16">
         <FeatureGrid items={[
           { icon: Lock, title: "Encrypted in transit", body: "All traffic is served over HTTPS/TLS. Session tokens are signed JWTs stored in httpOnly, sameSite cookies." },
