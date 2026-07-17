@@ -63,8 +63,8 @@ export const PLATFORM_HUB: Hub = {
       items: [
         { slug: "conversation-intelligence", label: "Conversation Intelligence", status: "available", blurb: "Transcript, acoustic, and semantic analysis in one layer.", href: "/v4-preview/platform/conversation-intelligence" },
         { slug: "scorecard", label: "Evidence-Based Scorecard", status: "available", blurb: "Every score traces to an exact transcript moment." },
-        { slug: "objection-intelligence", label: "Objection Intelligence", status: "available", blurb: "Structured drills against the objections that actually break deals." },
-        { slug: "ai-coach", label: "AI Coach", status: "available", blurb: "Rule-based tips targeted at your lowest-scoring metric." },
+        { slug: "objection-intelligence", label: "Objection Intelligence", status: "available", blurb: "Structured drills against the objections that actually break deals.", href: "/v4-preview/platform/objection-intelligence" },
+        { slug: "ai-coach", label: "AI Coach", status: "available", blurb: "Rule-based tips targeted at your lowest-scoring metric.", href: "/v4-preview/platform/ai-coach" },
         { slug: "live-coaching", label: "Live In-Session Coaching", status: "research", blurb: "Real-time prompts during an active conversation." },
         { slug: "script-builder", label: "Script Builder", status: "planned", blurb: "Compose and version team scripts against scored outcomes." },
         { slug: "script-optimization", label: "AI Script Optimization", status: "research", blurb: "Suggest script edits from aggregate performance data." },
@@ -75,7 +75,7 @@ export const PLATFORM_HUB: Hub = {
       heading: "For Teams",
       items: [
         { slug: "manager-dashboard", label: "Manager Dashboard", status: "available", blurb: "Roster, needs-attention queue, and team weakness aggregation.", href: "/v4-preview/platform/manager-dashboard" },
-        { slug: "team-analytics", label: "Team Analytics", status: "available", blurb: "Aggregated skill averages across every scored session." },
+        { slug: "team-analytics", label: "Team Analytics", status: "available", blurb: "Aggregated skill averages across every scored session.", href: "/v4-preview/platform/team-analytics" },
         { slug: "assignments-playbooks", label: "Assignments & Playbooks", status: "available", blurb: "Targeted drills assigned from evidence, not guesswork." },
         { slug: "compliance", label: "Compliance Monitoring", status: "available", blurb: "Flags unapproved claims and script deviations automatically." },
         { slug: "manager-copilot", label: "Manager Copilot", status: "available", blurb: "Surfaces what a manager should look at next." },
