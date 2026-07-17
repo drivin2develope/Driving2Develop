@@ -1,0 +1,87 @@
+/*
+ * V4 "Graphite Precision" design tokens - scoped entirely to .v4-scope so
+ * nothing here touches the existing V3 app (app/globals.css is untouched).
+ * This is a Phase 3 prototype: proving the visual system on 5 screens
+ * before it ever propagates to the other ~40 pages.
+ */
+.v4-scope {
+  --v4-bg: #0a0b0d;
+  --v4-bg-raised: #14161a;
+  --v4-bg-raised-2: #1b1e23;
+  --v4-bg-inset: #050607;
+  --v4-border: rgba(255, 255, 255, 0.09);
+  --v4-border-strong: rgba(255, 255, 255, 0.16);
+  --v4-text: #f2efe9;
+  --v4-text-secondary: #a3a7ad;
+  --v4-text-tertiary: #6b6f76;
+  --v4-gold-a: #7a5a1e;
+  --v4-gold-b: #d4af6a;
+  --v4-gold-c: #f2dfa8;
+  --v4-gold-solid: #c9a24b;
+  --v4-gold-ink: #171208;
+  --v4-green: #4fae82;
+  --v4-red: #e08a74;
+  --v4-blue: #7fa8d9;
+  color-scheme: dark;
+}
+
+.v4-scope[data-v4-theme="light"] {
+  --v4-bg: #f4f2ec;
+  --v4-bg-raised: #ffffff;
+  --v4-bg-raised-2: #ebe8e0;
+  --v4-bg-inset: #e7e4db;
+  --v4-border: rgba(10, 11, 13, 0.1);
+  --v4-border-strong: rgba(10, 11, 13, 0.18);
+  --v4-text: #14161a;
+  --v4-text-secondary: #55595e;
+  --v4-text-tertiary: #83878d;
+  --v4-gold-a: #6b4e17;
+  --v4-gold-b: #8f6d24;
+  --v4-gold-c: #b98a2e;
+  --v4-gold-solid: #8f6d24;
+  --v4-gold-ink: #fbf3e3;
+  --v4-green: #1e7a55;
+  --v4-red: #b3402a;
+  --v4-blue: #2f5fa8;
+  color-scheme: light;
+}
+
+.v4-scope {
+  background: var(--v4-bg);
+  color: var(--v4-text);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.v4-gold-fill {
+  background: linear-gradient(180deg, var(--v4-gold-c) 0%, var(--v4-gold-b) 55%, var(--v4-gold-a) 100%);
+  color: var(--v4-gold-ink);
+}
+
+.v4-gold-text {
+  background: linear-gradient(180deg, var(--v4-gold-c) 0%, var(--v4-gold-b) 60%, var(--v4-gold-a) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.v4-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v4-gold-b);
+}
+
+.v4-grid-bg {
+  background-image:
+    linear-gradient(var(--v4-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--v4-border) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-scope * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
