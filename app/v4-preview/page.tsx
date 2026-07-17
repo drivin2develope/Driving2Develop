@@ -6,6 +6,7 @@ import { V4Nav } from "@/components/v4/V4Nav";
 import { V4Hero } from "@/components/v4/V4Hero";
 import { V4CapabilityStrip } from "@/components/v4/V4CapabilityStrip";
 import { V4LoopSection } from "@/components/v4/V4LoopSection";
+import { V4TransformationSequence } from "@/components/v4/V4TransformationSequence";
 import { V4PlatformSection } from "@/components/v4/V4PlatformSection";
 import { V4ManagerDashboard } from "@/components/v4/V4ManagerDashboard";
 import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
@@ -33,6 +34,7 @@ export default function V4PreviewPage() {
         <V4Hero />
         <V4CapabilityStrip />
         <V4LoopSection />
+        <V4TransformationSequence />
         <V4PlatformSection />
         <V4ManagerDashboard />
 

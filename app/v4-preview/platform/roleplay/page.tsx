@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Mic, MessageSquareText, Activity, Gauge as GaugeIcon, ClipboardCheck, ShieldCheck, Cpu, Circle } from "lucide-react";
+import { Mic, MessageSquareText, Activity, Gauge as GaugeIcon, ClipboardCheck, ShieldCheck, Cpu } from "lucide-react";
 import "../../../v4-preview.css";
 import { V4Nav } from "@/components/v4/V4Nav";
 import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
@@ -10,8 +9,7 @@ import { V4Badge } from "@/components/v4/ui/V4Badge";
 import { V4FlowDiagram } from "@/components/v4/ui/V4FlowDiagram";
 import { V4DataGrid } from "@/components/v4/ui/V4DataGrid";
 import { V4MoatGrid } from "@/components/v4/ui/V4MoatGrid";
-import { LiveWaveform, CountUpMetric } from "@/components/v4/ui/V4Metrics";
-import { V4TrustGauge } from "@/components/v4/ui/V4TrustGauge";
+import { V4ConversationReplay } from "@/components/v4/V4ConversationReplay";
 import { RelatedCapabilities } from "@/components/v4/RelatedCapabilities";
 import { useV4Theme } from "@/components/v4/useV4Theme";
 
@@ -63,50 +61,12 @@ export default function RoleplayPage() {
               on price and the homeowner gets defensive for the rest of the session — exactly like a real doorstep.
             </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-12 rounded-xl border overflow-hidden max-w-4xl"
-              style={{ borderColor: "var(--v4-border-strong)", background: "var(--v4-bg-raised)" }}
-            >
-              <div className="flex items-center justify-between px-5 py-3.5 border-b" style={{ borderColor: "var(--v4-border)" }}>
-                <div className="flex items-center gap-2.5">
-                  <Circle size={8} fill="var(--v4-red)" stroke="none" className="animate-pulse" />
-                  <span className="text-xs font-medium">Live Roleplay</span>
-                  <span className="text-xs" style={{ color: "var(--v4-text-tertiary)" }}>
-                    Solar · Skeptical · Hard
-                  </span>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-[1fr_260px]">
-                <div className="p-5 space-y-4">
-                  <div className="rounded-lg border p-4" style={{ borderColor: "var(--v4-border)", background: "var(--v4-bg-inset)" }}>
-                    <p className="v4-eyebrow mb-1.5 opacity-80">Homeowner · trust 34 / irritation 12</p>
-                    <p className="text-sm leading-relaxed">
-                      &ldquo;I really don&apos;t want to sit through another sales pitch today.&rdquo;
-                    </p>
-                  </div>
-                  <LiveWaveform />
-                  <div className="rounded-lg border p-4" style={{ borderColor: "var(--v4-border)", background: "var(--v4-bg-inset)" }}>
-                    <p className="v4-eyebrow mb-1.5 opacity-80">You</p>
-                    <p className="text-sm leading-relaxed">
-                      Fair enough — I&apos;ll keep it to thirty seconds. What&apos;s your electric bill usually run in
-                      the summer?
-                    </p>
-                  </div>
-                </div>
-                <div className="p-5 border-t md:border-t-0 md:border-l flex flex-col items-center" style={{ borderColor: "var(--v4-border)" }}>
-                  <V4TrustGauge trust={41} irritation={12} />
-                  <div className="grid grid-cols-2 gap-4 w-full mt-2 pt-4 border-t" style={{ borderColor: "var(--v4-border)" }}>
-                    <CountUpMetric label="Pace" value={138} suffix=" wpm" />
-                    <CountUpMetric label="Filler words" value={1} />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            <div className="mt-12">
+              <V4ConversationReplay />
+            </div>
             <p className="mt-4 text-xs max-w-4xl" style={{ color: "var(--v4-text-tertiary)" }}>
-              Illustrative session data. Trust/irritation values update after every exchange in the real product.
+              Illustrative session data. Drag the timeline to replay how trust and irritation shifted through the
+              conversation.
             </p>
           </div>
         </section>

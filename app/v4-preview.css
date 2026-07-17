@@ -139,6 +139,53 @@
   background-size: 64px 64px;
 }
 
+/* Scrubber - custom-styled range input for the conversation replay timeline */
+.v4-scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+}
+.v4-scrubber::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--v4-border-strong);
+  border-radius: 999px;
+}
+.v4-scrubber::-moz-range-track {
+  height: 3px;
+  background: var(--v4-border-strong);
+  border-radius: 999px;
+}
+.v4-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--v4-gold-b);
+  border: 3px solid var(--v4-bg);
+  box-shadow: 0 0 0 1px var(--v4-gold-b);
+  margin-top: -8px;
+  transition: transform var(--v4-duration-fast) var(--v4-ease);
+}
+.v4-scrubber::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.v4-scrubber::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--v4-gold-b);
+  border: 3px solid var(--v4-bg);
+  box-shadow: 0 0 0 1px var(--v4-gold-b);
+}
+.v4-scrubber:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--v4-gold-b);
+  outline-offset: 3px;
+}
+
 /* Status pill - shared shape, color set via inline style referencing --v4-status-* */
 .v4-pill {
   display: inline-flex;
