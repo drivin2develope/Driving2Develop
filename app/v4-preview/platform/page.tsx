@@ -49,7 +49,7 @@ export default function PlatformOverviewPage() {
 
         {PLATFORM_HUB.categories.map((cat) => (
           <section key={cat.heading} className="border-t" style={{ borderColor: "var(--v4-border)" }}>
-            <div className="max-w-[1600px] mx-auto px-6 md:px-10 py-14 md:py-16">
+            <div className="max-w-[1600px] mx-auto px-6 md:px-10 py-16 md:py-20">
               <h2 className="text-xl font-semibold tracking-tight mb-6">{cat.heading}</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {cat.items.map((item, i) => {
