@@ -22,6 +22,47 @@
   --v4-green: #4fae82;
   --v4-red: #e08a74;
   --v4-blue: #7fa8d9;
+  --v4-violet: #9b8fd9;
+
+  /* Status semantics - shared vocabulary across every capability page */
+  --v4-status-available: var(--v4-green);
+  --v4-status-beta: var(--v4-blue);
+  --v4-status-planned: var(--v4-gold-b);
+  --v4-status-research: var(--v4-text-tertiary);
+
+  /* Type scale - one ramp, used everywhere so headings never drift page to page */
+  --v4-text-display: 3.4rem;
+  --v4-text-h1: 2.5rem;
+  --v4-text-h2: 2rem;
+  --v4-text-h3: 1.5rem;
+  --v4-text-body-lg: 1.125rem;
+  --v4-text-body: 0.9375rem;
+  --v4-text-sm: 0.8125rem;
+  --v4-text-xs: 0.75rem;
+
+  /* Spacing scale (4px base) */
+  --v4-space-1: 0.25rem;
+  --v4-space-2: 0.5rem;
+  --v4-space-3: 0.75rem;
+  --v4-space-4: 1rem;
+  --v4-space-6: 1.5rem;
+  --v4-space-8: 2rem;
+  --v4-space-12: 3rem;
+  --v4-space-16: 4rem;
+  --v4-space-24: 6rem;
+  --v4-space-32: 8rem;
+
+  /* Motion - one easing curve, three durations */
+  --v4-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --v4-duration-fast: 0.15s;
+  --v4-duration-base: 0.3s;
+  --v4-duration-slow: 0.6s;
+
+  /* Elevation */
+  --v4-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --v4-shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+  --v4-shadow-lg: 0 24px 64px -16px rgba(0, 0, 0, 0.55);
+
   color-scheme: dark;
 }
 
@@ -77,6 +118,44 @@
     linear-gradient(var(--v4-border) 1px, transparent 1px),
     linear-gradient(90deg, var(--v4-border) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* Status pill - shared shape, color set via inline style referencing --v4-status-* */
+.v4-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: var(--v4-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.3em 0.7em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.v4-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Diagram/system-map language for planned-capability pages: line-art nodes and
+   connectors, never a fabricated screenshot of UI that doesn't exist. */
+.v4-diagram-node {
+  border: 1px solid var(--v4-border-strong);
+  background: var(--v4-bg-raised);
+  border-radius: 10px;
+}
+.v4-diagram-connector {
+  background: var(--v4-border-strong);
+}
+.v4-diagram-connector-dashed {
+  background-image: linear-gradient(90deg, var(--v4-border-strong) 50%, transparent 50%);
+  background-size: 8px 1px;
+  background-repeat: repeat-x;
 }
 
 @media (prefers-reduced-motion: reduce) {

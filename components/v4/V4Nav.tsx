@@ -1,43 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  MessageSquareText,
-  Gauge,
-  GraduationCap,
-  Users2,
-  Map,
-  ShieldCheck,
-  ArrowUpRight,
-  Menu,
-  X,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { ArrowUpRight, Menu, X, Sun, Moon } from "lucide-react";
+import { PLATFORM_HUB } from "@/lib/v4/site-map";
+import { V4Badge } from "./ui/V4Badge";
 
-const PLATFORM_COLUMNS = [
-  {
-    heading: "Simulation",
-    items: [
-      { label: "Roleplay Engine", desc: "Adaptive difficulty, personality, and objection targeting.", icon: MessageSquareText },
-      { label: "Conversation Intelligence", desc: "Transcript, acoustic, and semantic analysis in one layer.", icon: Gauge },
-    ],
-  },
-  {
-    heading: "Coaching",
-    items: [
-      { label: "Scoring & Evidence", desc: "Every finding traces to an exact transcript moment.", icon: ShieldCheck },
-      { label: "Certification Paths", desc: "Structured progression from rookie to certified rep.", icon: GraduationCap },
-    ],
-  },
-  {
-    heading: "For Teams",
-    items: [
-      { label: "Manager Dashboard", desc: "Needs-attention queue, skill maps, assignment workflows.", icon: Users2 },
-      { label: "Territory Intelligence", desc: "Roadmap: cross-team and geographic benchmarking.", icon: Map },
-    ],
-  },
-];
+const TOP_LINKS = ["Solutions", "Industries", "Resources", "Pricing"];
+const MEGA_MENU_ITEM_LIMIT = 5;
 
 export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onToggleTheme: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,7 +59,7 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
               >
                 Platform
               </button>
-              {["Solutions", "Industries", "Resources", "Pricing"].map((label) => (
+              {TOP_LINKS.map((label) => (
                 <a
                   key={label}
                   href="#"
@@ -133,37 +102,50 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
           </button>
         </div>
 
-        {/* Mega menu */}
+        {/* Mega menu - generated from lib/v4/site-map.ts so nav status badges
+            can never drift from the real backing implementation. */}
         {menuOpen && (
           <div
             role="menu"
-            className="hidden lg:block border-t"
+            className="hidden lg:block border-t max-h-[calc(100vh-72px)] overflow-y-auto"
             style={{ background: "var(--v4-bg-raised)", borderColor: "var(--v4-border)" }}
           >
-            <div className="max-w-[1600px] mx-auto grid grid-cols-4 gap-10 px-10 py-10">
-              {PLATFORM_COLUMNS.map((col) => (
-                <div key={col.heading}>
-                  <p className="v4-eyebrow mb-4">{col.heading}</p>
-                  <ul className="space-y-4">
-                    {col.items.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <li key={item.label}>
-                          <a href="#" className="flex gap-3 group">
-                            <Icon size={17} className="mt-0.5 shrink-0" style={{ color: "var(--v4-gold-b)" }} />
-                            <span>
-                              <span className="block text-sm font-medium">{item.label}</span>
-                              <span className="block text-xs mt-0.5" style={{ color: "var(--v4-text-secondary)" }}>
-                                {item.desc}
+            <div className="max-w-[1600px] mx-auto grid grid-cols-4 gap-x-10 gap-y-10 px-10 py-10">
+              {PLATFORM_HUB.categories.map((col) => {
+                const shown = col.items.slice(0, MEGA_MENU_ITEM_LIMIT);
+                const hidden = col.items.length - shown.length;
+                return (
+                  <div key={col.heading}>
+                    <p className="v4-eyebrow mb-4">{col.heading}</p>
+                    <ul className="space-y-3.5">
+                      {shown.map((item) => {
+                        const Wrapper = item.href ? "a" : "div";
+                        return (
+                          <li key={item.slug}>
+                            <Wrapper
+                              {...(item.href ? { href: item.href } : {})}
+                              className={item.href ? "block group cursor-pointer" : "block"}
+                            >
+                              <span className="flex items-center justify-between gap-2">
+                                <span className="text-sm font-medium">{item.label}</span>
+                                <V4Badge status={item.status} />
                               </span>
-                            </span>
-                          </a>
+                              <span className="block text-xs mt-1" style={{ color: "var(--v4-text-secondary)" }}>
+                                {item.blurb}
+                              </span>
+                            </Wrapper>
+                          </li>
+                        );
+                      })}
+                      {hidden > 0 && (
+                        <li className="text-xs pt-1" style={{ color: "var(--v4-text-tertiary)" }}>
+                          +{hidden} more in Platform Overview
                         </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
+                      )}
+                    </ul>
+                  </div>
+                );
+              })}
               <div
                 className="rounded-lg border p-5 flex flex-col justify-between"
                 style={{ borderColor: "var(--v4-border-strong)", background: "var(--v4-bg-raised-2)" }}
@@ -172,7 +154,8 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
                   <p className="v4-eyebrow mb-2">Featured</p>
                   <p className="text-sm font-medium mb-1.5">See the full engine</p>
                   <p className="text-xs" style={{ color: "var(--v4-text-secondary)" }}>
-                    One connected system from rehearsal to organizational intelligence.
+                    One connected system from rehearsal to organizational intelligence - {PLATFORM_HUB.categories.reduce((n, c) => n + c.items.length, 0)}{" "}
+                    capabilities mapped, today and on the roadmap.
                   </p>
                 </div>
                 <a href="#" className="text-xs font-semibold mt-4 inline-flex items-center gap-1" style={{ color: "var(--v4-gold-b)" }}>
@@ -185,8 +168,8 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
 
         {/* Mobile drawer */}
         {mobileOpen && (
-          <div className="lg:hidden border-t px-6 py-5 space-y-4" style={{ borderColor: "var(--v4-border)", background: "var(--v4-bg-raised)" }}>
-            {["Platform", "Solutions", "Industries", "Resources", "Pricing"].map((label) => (
+          <div className="lg:hidden border-t px-6 py-5 space-y-4 max-h-[calc(100vh-72px)] overflow-y-auto" style={{ borderColor: "var(--v4-border)", background: "var(--v4-bg-raised)" }}>
+            {["Platform", ...TOP_LINKS].map((label) => (
               <a key={label} href="#" className="block text-sm font-medium">
                 {label}
               </a>
