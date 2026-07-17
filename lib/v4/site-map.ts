@@ -52,7 +52,7 @@ export const PLATFORM_HUB: Hub = {
     {
       heading: "Simulation",
       items: [
-        { slug: "roleplay", label: "AI Roleplay Simulator", status: "available", blurb: "Live mic practice against an adaptive homeowner personality." },
+        { slug: "roleplay", label: "AI Roleplay Simulator", status: "available", blurb: "Live mic practice against an adaptive homeowner personality.", href: "/v4-preview/platform/roleplay" },
         { slug: "customer-personalities", label: "AI Customer Personalities", status: "available", blurb: "Difficulty- and disposition-tuned homeowner behavior." },
         { slug: "voice-analysis", label: "Voice & Speech Analysis", status: "available", blurb: "Pace, filler words, and tone from real acoustic signal." },
         { slug: "upload-analysis", label: "Upload Analysis", status: "available", blurb: "Score a real field recording after the fact." },
@@ -61,6 +61,7 @@ export const PLATFORM_HUB: Hub = {
     {
       heading: "Coaching",
       items: [
+        { slug: "conversation-intelligence", label: "Conversation Intelligence", status: "available", blurb: "Transcript, acoustic, and semantic analysis in one layer.", href: "/v4-preview/platform/conversation-intelligence" },
         { slug: "scorecard", label: "Evidence-Based Scorecard", status: "available", blurb: "Every score traces to an exact transcript moment." },
         { slug: "objection-intelligence", label: "Objection Intelligence", status: "available", blurb: "Structured drills against the objections that actually break deals." },
         { slug: "ai-coach", label: "AI Coach", status: "available", blurb: "Rule-based tips targeted at your lowest-scoring metric." },
@@ -73,7 +74,7 @@ export const PLATFORM_HUB: Hub = {
     {
       heading: "For Teams",
       items: [
-        { slug: "manager-dashboard", label: "Manager Dashboard", status: "available", blurb: "Roster, needs-attention queue, and team weakness aggregation." },
+        { slug: "manager-dashboard", label: "Manager Dashboard", status: "available", blurb: "Roster, needs-attention queue, and team weakness aggregation.", href: "/v4-preview/platform/manager-dashboard" },
         { slug: "team-analytics", label: "Team Analytics", status: "available", blurb: "Aggregated skill averages across every scored session." },
         { slug: "assignments-playbooks", label: "Assignments & Playbooks", status: "available", blurb: "Targeted drills assigned from evidence, not guesswork." },
         { slug: "compliance", label: "Compliance Monitoring", status: "available", blurb: "Flags unapproved claims and script deviations automatically." },

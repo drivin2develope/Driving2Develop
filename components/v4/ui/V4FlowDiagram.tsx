@@ -1,8 +1,7 @@
-import type { ComponentType } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 
 export interface FlowNode {
-  icon: ComponentType<{ size?: number; style?: React.CSSProperties }>;
+  icon: LucideIcon;
   label: string;
   desc: string;
   /** Marks a node that doesn't exist yet - rendered dashed, dimmer. */
