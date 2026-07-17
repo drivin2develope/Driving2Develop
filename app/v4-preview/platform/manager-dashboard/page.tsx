@@ -1,21 +1,11 @@
 "use client";
 
-import { ClipboardCheck, AlertTriangle, Grid3x3, ClipboardList, Users2, ShieldCheck, GitBranch, Route } from "lucide-react";
-import "../../../v4-preview.css";
-import { V4Nav } from "@/components/v4/V4Nav";
+import { ClipboardCheck, AlertTriangle, Grid3x3, ClipboardList, Users2, ShieldCheck, GitBranch, Route, TrendingDown } from "lucide-react";
+import { V4CapabilityPage } from "@/components/v4/V4CapabilityPage";
 import { V4ManagerDashboard } from "@/components/v4/V4ManagerDashboard";
-import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
-import { SectionHeading } from "@/components/v4/ui/SectionHeading";
-import { V4Badge } from "@/components/v4/ui/V4Badge";
-import { V4FlowDiagram } from "@/components/v4/ui/V4FlowDiagram";
-import { V4DataGrid } from "@/components/v4/ui/V4DataGrid";
-import { V4MoatGrid } from "@/components/v4/ui/V4MoatGrid";
 import { V4ScoreGauge } from "@/components/v4/ui/V4Arc";
-import { TrendingDown } from "lucide-react";
 import { V4IntelligenceMap } from "@/components/v4/V4IntelligenceMap";
 import { V4PerformanceGraph } from "@/components/v4/V4PerformanceGraph";
-import { RelatedCapabilities } from "@/components/v4/RelatedCapabilities";
-import { useV4Theme } from "@/components/v4/useV4Theme";
 
 const FLOW = [
   { icon: ClipboardCheck, label: "Session scores", desc: "Every scored session across the whole roster." },
@@ -39,84 +29,36 @@ const MOAT = [
 ];
 
 export default function ManagerDashboardPage() {
-  const { theme, toggleTheme } = useV4Theme();
-
   return (
-    <div className="v4-scope font-sans" data-v4-theme={theme} style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
-      <V4Nav theme={theme} onToggleTheme={toggleTheme} />
-      <main id="main-content">
-        <section className="relative overflow-hidden" style={{ background: "var(--v4-bg)" }}>
-          <div className="absolute inset-0 v4-grid-bg opacity-[0.35]" aria-hidden="true" />
-          <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 pt-20 pb-16 md:pt-28">
-            <div className="grid lg:grid-cols-[minmax(0,640px)_260px] gap-10 items-center">
-              <div>
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="v4-eyebrow">Manager Operating System</span>
-                  <V4Badge status="available" />
-                </div>
-                <h1 className="text-[2.6rem] leading-[1.05] md:text-[3.2rem] md:leading-[1.03] font-semibold tracking-tight">
-                  The manager operating system, not another reporting dashboard.
-                </h1>
-                <p className="mt-6 text-base md:text-lg max-w-xl" style={{ color: "var(--v4-text-secondary)" }}>
-                  A needs-attention queue built from evidence, a live skill heat-map across the whole team, and
-                  assignments that route straight to the drill that targets the gap. Try it below.
-                </p>
-              </div>
-              <div
-                className="rounded-xl border p-5 flex flex-col items-center"
-                style={{ borderColor: "var(--v4-border-strong)", background: "var(--v4-bg-raised)" }}
-              >
-                <V4ScoreGauge value={73} label="Team avg score" radius={54} size="w-[150px]" />
-                <div className="flex items-center gap-1.5 text-xs mt-3 pt-3 border-t w-full justify-center" style={{ borderColor: "var(--v4-border)", color: "var(--v4-red)" }}>
-                  <TrendingDown size={13} /> Weakest: Objection Handling
-                </div>
-              </div>
-            </div>
+    <V4CapabilityPage
+      eyebrow="Manager Operating System"
+      title="The manager operating system, not another reporting dashboard."
+      subtitle="A needs-attention queue built from evidence, a live skill heat-map across the whole team, and assignments that route straight to the drill that targets the gap. Try it below."
+      heroSide={
+        <div
+          className="rounded-xl border p-5 flex flex-col items-center"
+          style={{ borderColor: "var(--v4-border-strong)", background: "var(--v4-bg-raised)" }}
+        >
+          <V4ScoreGauge value={73} label="Team avg score" radius={54} size="w-[150px]" />
+          <div className="flex items-center gap-1.5 text-xs mt-3 pt-3 border-t w-full justify-center" style={{ borderColor: "var(--v4-border)", color: "var(--v4-red)" }}>
+            <TrendingDown size={13} /> Weakest: Objection Handling
           </div>
-        </section>
-
-        <V4ManagerDashboard />
-        <V4IntelligenceMap />
-        <V4PerformanceGraph />
-
-        <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
-          <div className="max-w-[1600px] mx-auto px-6 md:px-10">
-            <SectionHeading eyebrow="How it works" title="From individual sessions to a manager's next move." />
-            <div className="mt-12">
-              <V4FlowDiagram nodes={FLOW} />
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
-          <div className="max-w-[1600px] mx-auto px-6 md:px-10">
-            <SectionHeading eyebrow="What it's built on" title="The data behind the queue." />
-            <div className="mt-12">
-              <V4DataGrid items={DATA_INPUTS} />
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
-          <div className="max-w-[1600px] mx-auto px-6 md:px-10">
-            <SectionHeading eyebrow="Why it's hard to copy" title="An operating system, not a reporting dashboard." />
-            <div className="mt-12">
-              <V4MoatGrid items={MOAT} />
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
-          <div className="max-w-[1600px] mx-auto px-6 md:px-10">
-            <SectionHeading eyebrow="Related capabilities" title="Part of one connected system." />
-            <div className="mt-10">
-              <RelatedCapabilities slugs={["assignments-playbooks", "compliance", "team-analytics"]} />
-            </div>
-          </div>
-        </section>
-
-        <V4FinalCTA />
-      </main>
-    </div>
+        </div>
+      }
+      heroWide={
+        <>
+          <V4ManagerDashboard />
+          <V4IntelligenceMap />
+          <V4PerformanceGraph />
+        </>
+      }
+      flowTitle="From individual sessions to a manager's next move."
+      flow={FLOW}
+      dataTitle="The data behind the queue."
+      dataInputs={DATA_INPUTS}
+      moatTitle="An operating system, not a reporting dashboard."
+      moat={MOAT}
+      relatedSlugs={["assignments-playbooks", "compliance", "team-analytics"]}
+    />
   );
 }
