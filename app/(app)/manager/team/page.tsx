@@ -38,7 +38,7 @@ export default async function TeamPage() {
                 <TR key={r.id} className="cursor-pointer">
                   <TD><Link href={`/manager/team/${r.id}`} className="flex items-center gap-3"><Avatar name={r.name} size={30} /><span className="font-medium">{r.name}</span></Link></TD>
                   <TD className="capitalize text-[var(--color-secondary)]">{r.level}</TD>
-                  <TD className="text-right font-semibold text-[var(--color-gold-text)] tabular-nums">{r.latest ?? "—"}</TD>
+                  <TD className="text-right font-semibold text-[var(--color-gold)] tabular-nums">{r.latest ?? "—"}</TD>
                   <TD className="text-right tabular-nums text-[var(--color-secondary)]">{r.avg ?? "—"}</TD>
                   <TD className={`text-right tabular-nums ${r.trend > 0 ? "text-[var(--color-green)]" : r.trend < 0 ? "text-[var(--color-red)]" : "text-[var(--color-secondary)]"}`}>{r.trend > 0 ? "+" : ""}{r.trend || "—"}</TD>
                   <TD className="text-right tabular-nums text-[var(--color-secondary)]">{r.count}</TD>

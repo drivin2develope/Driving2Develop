@@ -22,7 +22,7 @@ export function ScenarioPicker({ scenarios }: { scenarios: ScenarioDTO[] }) {
           {DIFFICULTIES.map((d) => (
             <button key={d} role="tab" aria-selected={filter === d} onClick={() => setFilter(d)}
               className={cn("text-xs px-3 py-1.5 rounded-full border transition-colors",
-                filter === d ? "border-[var(--color-gold)] text-[var(--color-gold-text)] bg-[rgba(227,179,65,0.08)]" : "border-[var(--color-border)] text-[var(--color-secondary)] hover:bg-[var(--color-border)]")}>
+                filter === d ? "border-[var(--color-gold)] text-[var(--color-gold)] bg-[rgba(227,179,65,0.08)]" : "border-[var(--color-border)] text-[var(--color-secondary)] hover:bg-white/5")}>
               {d === "ALL" ? "All levels" : d.charAt(0) + d.slice(1).toLowerCase()}
             </button>
           ))}
@@ -30,7 +30,7 @@ export function ScenarioPicker({ scenarios }: { scenarios: ScenarioDTO[] }) {
         <div title="Complete 35 more drills to unlock Humor Mode"
           className="flex items-center gap-2 text-xs text-[var(--color-disabled)] px-3 py-1.5 rounded-full border border-[var(--color-border)] cursor-not-allowed">
           <Lock size={12} /> Humor Mode
-          <span className="w-8 h-4 rounded-full bg-[var(--color-border)] relative shrink-0"><span className="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-[var(--color-disabled)]" /></span>
+          <span className="w-8 h-4 rounded-full bg-white/5 relative shrink-0"><span className="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white/20" /></span>
         </div>
       </div>
 

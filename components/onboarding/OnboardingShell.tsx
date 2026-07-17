@@ -34,7 +34,7 @@ export function OnboardingShell({
         <div className="flex justify-center mb-8"><Logo /></div>
         <div className="flex items-center gap-1.5 justify-center mb-2" aria-hidden="true">
           {ONBOARDING_STEPS.map((s, i) => (
-            <div key={s.slug} className={cn("h-1.5 rounded-full transition-all", i === step ? "w-7 bg-[var(--color-gold)]" : i < step ? "w-1.5 bg-[var(--color-gold)]" : "w-1.5 bg-[var(--color-border-strong)]")} />
+            <div key={s.slug} className={cn("h-1.5 rounded-full transition-all", i === step ? "w-7 bg-[var(--color-gold)]" : i < step ? "w-1.5 bg-[var(--color-gold)]" : "w-1.5 bg-white/10")} />
           ))}
         </div>
         <p className="text-center text-2xs uppercase tracking-widest text-[var(--color-disabled)] mb-6">

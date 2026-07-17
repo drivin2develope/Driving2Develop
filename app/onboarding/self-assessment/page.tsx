@@ -29,7 +29,7 @@ export default function SelfAssessmentStep() {
           <div key={q.key}>
             <div className="flex items-center justify-between mb-2">
               <label htmlFor={q.key} className="text-sm">{q.label}</label>
-              <span className="text-sm font-semibold text-[var(--color-gold-text)] tabular-nums w-8 text-right">{values[q.key]}</span>
+              <span className="text-sm font-semibold text-[var(--color-gold)] tabular-nums w-8 text-right">{values[q.key]}</span>
             </div>
             <input
               id={q.key}

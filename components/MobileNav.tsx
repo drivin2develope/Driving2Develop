@@ -9,7 +9,7 @@ import { Logo } from "@/components/Logo";
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function MobileTopBar({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
+export function MobileTopBar({ role }: { role: "REP" | "MANAGER" }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -22,7 +22,7 @@ export function MobileTopBar({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
   }
 
   return (
-    <div className="md:hidden sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-[var(--color-border)] bg-[var(--nav-blur-bg)] backdrop-blur">
+    <div className="md:hidden sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-[var(--color-border)] bg-[rgba(10,10,11,0.82)] backdrop-blur">
       <Logo />
       <button onClick={() => setOpen(true)} aria-label="Open menu" className="p-1 text-[var(--color-primary)]">
         <Menu size={22} />
@@ -53,7 +53,7 @@ export function MobileTopBar({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
                         const Icon = item.icon;
                         return (
                           <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
-                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm", active ? "bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)] font-medium" : "text-[var(--color-secondary)]")}>
+                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm", active ? "bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)] font-medium" : "text-[var(--color-secondary)]")}>
                             <Icon size={17} /> {item.label}
                           </Link>
                         );

@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="absolute inset-0 hero-glow pointer-events-none" aria-hidden="true" />
         <Section className="pt-16 md:pt-24 pb-16 grid md:grid-cols-2 gap-12 items-center relative">
           <FadeIn>
-            <span className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold-text)]">
+            <span className="text-2xs font-semibold uppercase tracking-widest text-[var(--color-gold)]">
               Sales training that actually reps
             </span>
             <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight leading-[1.08]">
@@ -24,11 +24,11 @@ export default function HomePage() {
               <Link href="/signup" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-gold)] px-6 py-3 text-sm font-semibold text-[var(--color-gold-ink)] shadow-gold hover:brightness-110 transition">
                 Start Free <ArrowRight size={16} />
               </Link>
-              <Link href="/how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] px-6 py-3 text-sm hover:bg-[var(--color-border)] transition">
+              <Link href="/how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-strong)] px-6 py-3 text-sm hover:bg-white/5 transition">
                 See how it works
               </Link>
             </div>
-            <p className="mt-4 text-xs text-[var(--color-disabled)]">No credit card · Live practice where your browser supports it, upload works everywhere · Free tier forever</p>
+            <p className="mt-4 text-xs text-[var(--color-disabled)]">No credit card · Works in Chrome & Edge · Free tier forever</p>
           </FadeIn>
 
           <FadeIn delay={0.12} className="card p-5 relative">
@@ -53,7 +53,7 @@ export default function HomePage() {
             <div className="grid grid-cols-3 gap-3 text-center">
               <div><p className="text-lg font-semibold">128</p><p className="text-2xs text-[var(--color-secondary)] uppercase tracking-wide">WPM</p></div>
               <div><p className="text-lg font-semibold text-[var(--color-orange)]">4</p><p className="text-2xs text-[var(--color-secondary)] uppercase tracking-wide">Fillers</p></div>
-              <div><p className="text-lg font-semibold text-[var(--color-gold-text)]">82</p><p className="text-2xs text-[var(--color-secondary)] uppercase tracking-wide">Live Score</p></div>
+              <div><p className="text-lg font-semibold text-[var(--color-gold)]">82</p><p className="text-2xs text-[var(--color-secondary)] uppercase tracking-wide">Live Score</p></div>
             </div>
           </FadeIn>
         </Section>
@@ -87,10 +87,10 @@ export default function HomePage() {
             { icon: Repeat, step: "04", title: "Improve", body: "Retry from the exact objection that tripped you up. Track your trend session over session." },
           ].map((item, i) => (
             <FadeIn key={item.step} delay={i * 0.06}>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]">
                 <item.icon size={18} />
               </div>
-              <span className="mt-4 block text-[var(--color-gold-text)] text-sm font-semibold">{item.step}</span>
+              <span className="mt-4 block text-[var(--color-gold)] text-sm font-semibold">{item.step}</span>
               <h3 className="font-medium mt-1">{item.title}</h3>
               <p className="text-sm text-[var(--color-secondary)] mt-1.5">{item.body}</p>
             </FadeIn>
@@ -106,10 +106,10 @@ export default function HomePage() {
             { icon: ShieldCheck, title: "For companies", body: "Scale onboarding without burning your best closer's time on 1:1 ride-alongs.", href: "/for-companies" },
           ].map((c) => (
             <FadeIn key={c.title} className="card p-6 flex flex-col">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]"><c.icon size={20} /></div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]"><c.icon size={20} /></div>
               <h3 className="font-medium mt-4">{c.title}</h3>
               <p className="text-sm text-[var(--color-secondary)] mt-1.5 flex-1">{c.body}</p>
-              <Link href={c.href} className="text-sm text-[var(--color-gold-text)] mt-4 inline-flex items-center gap-1">Learn more <ArrowRight size={14} /></Link>
+              <Link href={c.href} className="text-sm text-[var(--color-gold)] mt-4 inline-flex items-center gap-1">Learn more <ArrowRight size={14} /></Link>
             </FadeIn>
           ))}
         </div>

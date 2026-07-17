@@ -6,7 +6,7 @@ import { Award, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Achievements" };
-const TIER_COLOR: Record<string, string> = { bronze: "text-[var(--color-orange)]", silver: "text-[var(--color-secondary)]", gold: "text-[var(--color-gold-text)]" };
+const TIER_COLOR: Record<string, string> = { bronze: "text-[var(--color-orange)]", silver: "text-[var(--color-secondary)]", gold: "text-[var(--color-gold)]" };
 
 export default async function AchievementsPage() {
   const user = await getCurrentUser();
@@ -29,7 +29,7 @@ export default async function AchievementsPage() {
             <StaggerItem key={a.key}>
               <Card className={cn("h-full", !a.unlocked && "opacity-70")}>
                 <div className="flex items-start justify-between">
-                  <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl", a.unlocked ? "bg-[rgba(227,179,65,0.12)]" : "bg-[var(--color-border)]")}>
+                  <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl", a.unlocked ? "bg-[rgba(227,179,65,0.12)]" : "bg-white/5")}>
                     {a.unlocked ? <Award size={22} className={TIER_COLOR[a.tier]} /> : <Lock size={18} className="text-[var(--color-disabled)]" />}
                   </div>
                   <span className={cn("text-2xs uppercase tracking-wide", TIER_COLOR[a.tier])}>{a.tier}</span>

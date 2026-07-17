@@ -15,11 +15,11 @@ export function LogoMark({ size = 28, className }: { size?: number; className?: 
 
 export function Logo({ href = "/", className, wordmark = true }: { href?: string; className?: string; wordmark?: boolean }) {
   return (
-    <Link href={href} className={cn("flex items-center gap-2.5 group", className)} aria-label="Driven2Develop home">
+    <Link href={href} className={cn("flex items-center gap-2.5 group", className)} aria-label="Driving2Develop home">
       <LogoMark />
       {wordmark && (
         <span className="font-semibold tracking-tight text-[15px] text-[var(--color-primary)]">
-          Driven2Develop
+          Driving2Develop
         </span>
       )}
     </Link>

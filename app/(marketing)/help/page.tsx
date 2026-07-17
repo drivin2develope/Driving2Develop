@@ -22,10 +22,10 @@ export default function HelpPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {TOPICS.map((t) => (
             <FadeIn key={t.title} className="card p-6 flex flex-col">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]"><t.icon size={20} /></div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]"><t.icon size={20} /></div>
               <h3 className="font-medium mt-4">{t.title}</h3>
               <p className="text-sm text-[var(--color-secondary)] mt-1.5 flex-1">{t.body}</p>
-              <Link href="/contact" className="text-sm text-[var(--color-gold-text)] mt-4 inline-flex items-center gap-1">Read more <ArrowRight size={14} /></Link>
+              <Link href="/contact" className="text-sm text-[var(--color-gold)] mt-4 inline-flex items-center gap-1">Read more <ArrowRight size={14} /></Link>
             </FadeIn>
           ))}
         </div>

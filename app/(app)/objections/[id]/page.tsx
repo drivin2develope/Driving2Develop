@@ -26,11 +26,11 @@ export default async function ObjectionDetail({ params }: { params: { id: string
           </div>
         </Card>
         <Card>
-          <CardHeader title={<span className="flex items-center gap-2"><ListChecks size={15} className="text-[var(--color-gold-text)]" /> Recommended response</span>} />
+          <CardHeader title={<span className="flex items-center gap-2"><ListChecks size={15} className="text-[var(--color-gold)]" /> Recommended response</span>} />
           <ol className="space-y-2.5">
             {steps.map((s, i) => (
               <li key={i} className="flex gap-3 text-sm">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(227,179,65,0.12)] text-[var(--color-gold-text)] text-xs font-semibold">{i + 1}</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(227,179,65,0.12)] text-[var(--color-gold)] text-xs font-semibold">{i + 1}</span>
                 <span className="text-[var(--color-secondary)] pt-0.5">{s}</span>
               </li>
             ))}
@@ -41,7 +41,7 @@ export default async function ObjectionDetail({ params }: { params: { id: string
           <p className="text-sm leading-relaxed rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">&ldquo;{o.exampleScript}&rdquo;</p>
         </Card>
         <Card>
-          <CardHeader title={<span className="flex items-center gap-2"><Lightbulb size={15} className="text-[var(--color-gold-text)]" /> Related tactics</span>} />
+          <CardHeader title={<span className="flex items-center gap-2"><Lightbulb size={15} className="text-[var(--color-gold)]" /> Related tactics</span>} />
           <div className="flex flex-wrap gap-2">
             {tactics.map((t) => <span key={t} className="text-xs px-3 py-1.5 rounded-full border border-[var(--color-border)] text-[var(--color-secondary)]">{t}</span>)}
           </div>

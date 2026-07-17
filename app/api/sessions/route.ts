@@ -20,7 +20,6 @@ import {
   generateTips,
   buildPaceTimeline,
   buildEnergyTimeline,
-  buildEvidence,
 } from "@/lib/analysis";
 
 const DEFAULT_TALKING_POINTS = ["introduction", "value_prop", "objection_handling", "close"];
@@ -82,11 +81,6 @@ async function handleLive(userId: string, payload: LivePayload) {
     talkListenRatio: Math.min(talkListenRatio, 100),
   });
   const paceTimeline = buildPaceTimeline(payload.wordChunks || [], payload.durationSeconds * 1000);
-  const evidence = buildEvidence({
-    transcript,
-    requiredTalkingPoints,
-    homeownerLines: payload.homeownerLines || [],
-  });
 
   const session = await prisma.practiceSession.create({
     data: {
@@ -116,7 +110,6 @@ async function handleLive(userId: string, payload: LivePayload) {
           transcriptConfidence: "HIGH",
           tipsJson: JSON.stringify(tips),
           paceTimelineJson: JSON.stringify(paceTimeline),
-          evidenceJson: JSON.stringify(evidence),
         },
       },
     },
@@ -176,7 +169,6 @@ async function handleUpload(userId: string, formData: FormData) {
       volumeVariation,
     });
     transcriptConfidence = "HIGH";
-    const evidence = buildEvidence({ transcript, requiredTalkingPoints: DEFAULT_TALKING_POINTS, homeownerLines: [] });
     metricsData = {
       wordsPerMinute: wpm,
       paceVariance: 0,
@@ -196,7 +188,6 @@ async function handleUpload(userId: string, formData: FormData) {
       transcriptConfidence,
       tipsJson: JSON.stringify(tips),
       paceTimelineJson: JSON.stringify(buildEnergyTimeline(payload.amplitudeSamples || [])),
-      evidenceJson: JSON.stringify(evidence),
     };
   } else {
     // Acoustic-only fallback - honest about what's real vs unavailable.
@@ -220,8 +211,8 @@ async function handleUpload(userId: string, formData: FormData) {
       overallScore: overall,
       transcriptConfidence: "LOW" as const,
       tipsJson: JSON.stringify([
-        { skill: null, tip: "Add an OPENAI_API_KEY to unlock transcript-based coaching (filler words, keyword adherence, closing strength) for uploads." },
-        { skill: null, tip: "In the meantime, keep an eye on your pacing and pauses from the acoustic analysis below." },
+        "Add an OPENAI_API_KEY to unlock transcript-based coaching (filler words, keyword adherence, closing strength) for uploads.",
+        "In the meantime, keep an eye on your pacing and pauses from the acoustic analysis below.",
       ]),
       paceTimelineJson: JSON.stringify(buildEnergyTimeline(payload.amplitudeSamples || [])),
     };

@@ -3,7 +3,7 @@ import { Card } from "./card";
 
 type Accent = "gold" | "green" | "red" | "blue" | "purple" | "orange";
 const ACCENT: Record<Accent, string> = {
-  gold: "text-[var(--color-gold-text)]",
+  gold: "text-[var(--color-gold)]",
   green: "text-[var(--color-green)]",
   red: "text-[var(--color-red)]",
   blue: "text-[var(--color-blue)]",

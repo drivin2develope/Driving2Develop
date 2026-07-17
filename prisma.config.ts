@@ -2,7 +2,7 @@ import "dotenv/config";
 import { defineConfig } from "prisma/config";
 import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
 
-// Driven2Develop uses Prisma's engine-less "js" engine (driver adapters) so that no
+// Driving2Develop uses Prisma's engine-less "js" engine (driver adapters) so that no
 // native Rust engine binary needs to be downloaded at install/build time.
 // Locally this points the Prisma CLI (generate/migrate/studio) at SQLite via
 // better-sqlite3. The deployed app's runtime client (lib/db.ts) picks the

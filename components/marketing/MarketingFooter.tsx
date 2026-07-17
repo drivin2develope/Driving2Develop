@@ -59,7 +59,7 @@ export function MarketingFooter() {
       </div>
       <div className="border-t border-[var(--color-border)]">
         <div className="max-w-6xl mx-auto px-5 md:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--color-secondary)]">
-          <span>© {new Date().getFullYear()} Driven2Develop. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Driving2Develop. All rights reserved.</span>
           <span>Built for door-to-door teams.</span>
         </div>
       </div>
