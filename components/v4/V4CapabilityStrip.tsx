@@ -13,7 +13,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { V4Badge } from "./ui/V4Badge";
-import type { CapabilityStatus } from "@/lib/v4/site-map";
+import { V4Reveal } from "./ui/V4Reveal";
+import { allCapabilities, type CapabilityStatus } from "@/lib/v4/site-map";
 
 const FEATURED: { slug: string; label: string; status: CapabilityStatus; icon: LucideIcon }[] = [
   { slug: "roleplay", label: "AI Roleplay Simulator", status: "available", icon: Mic },
@@ -27,6 +28,8 @@ const FEATURED: { slug: string; label: string; status: CapabilityStatus; icon: L
 ];
 
 export function V4CapabilityStrip() {
+  const all = allCapabilities();
+
   return (
     <section className="border-t" style={{ borderColor: "var(--v4-border)" }}>
       <div className="max-w-[1600px] mx-auto px-6 md:px-10 py-16 md:py-20">
@@ -42,15 +45,24 @@ export function V4CapabilityStrip() {
           </a>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURED.map(({ slug, label, status, icon: Icon }) => (
-            <div key={slug} className="v4-diagram-node p-5">
-              <div className="flex items-start justify-between gap-2">
-                <Icon size={18} style={{ color: "var(--v4-gold-b)" }} />
-                <V4Badge status={status} />
-              </div>
-              <p className="text-sm font-medium mt-3.5">{label}</p>
-            </div>
-          ))}
+          {FEATURED.map(({ slug, label, status, icon: Icon }, i) => {
+            const href = all.find((c) => c.slug === slug)?.href;
+            const Wrapper = href ? "a" : "div";
+            return (
+              <V4Reveal key={slug} index={i % 4}>
+                <Wrapper
+                  {...(href ? { href } : {})}
+                  className={`v4-diagram-node p-5 h-full block transition-all ${href ? "hover:border-[var(--v4-gold-b)] hover:-translate-y-0.5" : ""}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <Icon size={18} style={{ color: "var(--v4-gold-b)" }} />
+                    <V4Badge status={status} />
+                  </div>
+                  <p className="text-sm font-medium mt-3.5">{label}</p>
+                </Wrapper>
+              </V4Reveal>
+            );
+          })}
         </div>
       </div>
     </section>

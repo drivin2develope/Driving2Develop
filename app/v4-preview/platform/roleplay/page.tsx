@@ -7,9 +7,11 @@ import { V4Nav } from "@/components/v4/V4Nav";
 import { V4FinalCTA } from "@/components/v4/V4FinalCTA";
 import { SectionHeading } from "@/components/v4/ui/SectionHeading";
 import { V4Badge } from "@/components/v4/ui/V4Badge";
-import { V4Card } from "@/components/v4/ui/V4Card";
 import { V4FlowDiagram } from "@/components/v4/ui/V4FlowDiagram";
+import { V4DataGrid } from "@/components/v4/ui/V4DataGrid";
+import { V4MoatGrid } from "@/components/v4/ui/V4MoatGrid";
 import { LiveWaveform, CountUpMetric } from "@/components/v4/ui/V4Metrics";
+import { V4TrustGauge } from "@/components/v4/ui/V4TrustGauge";
 import { RelatedCapabilities } from "@/components/v4/RelatedCapabilities";
 import { useV4Theme } from "@/components/v4/useV4Theme";
 
@@ -94,11 +96,12 @@ export default function RoleplayPage() {
                     </p>
                   </div>
                 </div>
-                <div className="p-5 border-t md:border-t-0 md:border-l space-y-4" style={{ borderColor: "var(--v4-border)" }}>
-                  <CountUpMetric label="Trust trend" value={41} suffix="  (+7)" />
-                  <CountUpMetric label="Irritation" value={12} />
-                  <CountUpMetric label="Pace" value={138} suffix=" wpm" />
-                  <CountUpMetric label="Filler words" value={1} />
+                <div className="p-5 border-t md:border-t-0 md:border-l flex flex-col items-center" style={{ borderColor: "var(--v4-border)" }}>
+                  <V4TrustGauge trust={41} irritation={12} />
+                  <div className="grid grid-cols-2 gap-4 w-full mt-2 pt-4 border-t" style={{ borderColor: "var(--v4-border)" }}>
+                    <CountUpMetric label="Pace" value={138} suffix=" wpm" />
+                    <CountUpMetric label="Filler words" value={1} />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -120,15 +123,8 @@ export default function RoleplayPage() {
         <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
           <div className="max-w-[1600px] mx-auto px-6 md:px-10">
             <SectionHeading eyebrow="What it's built on" title="The data behind every score." />
-            <div className="mt-12 grid md:grid-cols-2 gap-4">
-              {DATA_INPUTS.map((d) => (
-                <V4Card key={d.label} className="p-6">
-                  <p className="text-sm font-medium">{d.label}</p>
-                  <p className="text-sm mt-2" style={{ color: "var(--v4-text-secondary)" }}>
-                    {d.detail}
-                  </p>
-                </V4Card>
-              ))}
+            <div className="mt-12">
+              <V4DataGrid items={DATA_INPUTS} />
             </div>
           </div>
         </section>
@@ -136,16 +132,8 @@ export default function RoleplayPage() {
         <section className="py-20 md:py-28 border-t" style={{ borderColor: "var(--v4-border)" }}>
           <div className="max-w-[1600px] mx-auto px-6 md:px-10">
             <SectionHeading eyebrow="Why it's hard to copy" title="Not a demo trick — a stateful system." />
-            <div className="mt-12 grid md:grid-cols-3 gap-6">
-              {MOAT.map((m) => (
-                <div key={m.title}>
-                  <m.icon size={20} style={{ color: "var(--v4-gold-b)" }} />
-                  <h3 className="font-medium mt-4">{m.title}</h3>
-                  <p className="text-sm mt-1.5" style={{ color: "var(--v4-text-secondary)" }}>
-                    {m.body}
-                  </p>
-                </div>
-              ))}
+            <div className="mt-12">
+              <V4MoatGrid items={MOAT} />
             </div>
           </div>
         </section>

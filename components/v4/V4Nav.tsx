@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Menu, X, Sun, Moon } from "lucide-react";
 import { PLATFORM_HUB } from "@/lib/v4/site-map";
 import { V4Badge } from "./ui/V4Badge";
@@ -104,8 +105,13 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
 
         {/* Mega menu - generated from lib/v4/site-map.ts so nav status badges
             can never drift from the real backing implementation. */}
+        <AnimatePresence>
         {menuOpen && (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             role="menu"
             className="hidden lg:block border-t max-h-[calc(100vh-72px)] overflow-y-auto"
             style={{ background: "var(--v4-bg-raised)", borderColor: "var(--v4-border)" }}
@@ -124,7 +130,7 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
                           <li key={item.slug}>
                             <Wrapper
                               {...(item.href ? { href: item.href } : {})}
-                              className={item.href ? "block group cursor-pointer" : "block"}
+                              className={item.href ? "block group cursor-pointer -mx-2 px-2 py-1 rounded-md transition-colors hover:bg-[var(--v4-bg-raised-2)]" : "block -mx-2 px-2 py-1"}
                             >
                               <span className="flex items-center justify-between gap-2">
                                 <span className="text-sm font-medium">{item.label}</span>
@@ -138,8 +144,10 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
                         );
                       })}
                       {hidden > 0 && (
-                        <li className="text-xs pt-1" style={{ color: "var(--v4-text-tertiary)" }}>
-                          +{hidden} more in Platform Overview
+                        <li>
+                          <a href="/v4-preview/platform" className="text-xs pt-1 block hover:underline" style={{ color: "var(--v4-text-tertiary)" }}>
+                            +{hidden} more in Platform Overview
+                          </a>
                         </li>
                       )}
                     </ul>
@@ -158,13 +166,14 @@ export function V4Nav({ theme, onToggleTheme }: { theme: "dark" | "light"; onTog
                     capabilities mapped, today and on the roadmap.
                   </p>
                 </div>
-                <a href="#" className="text-xs font-semibold mt-4 inline-flex items-center gap-1" style={{ color: "var(--v4-gold-b)" }}>
+                <a href="/v4-preview/platform" className="text-xs font-semibold mt-4 inline-flex items-center gap-1" style={{ color: "var(--v4-gold-b)" }}>
                   View platform overview <ArrowUpRight size={12} />
                 </a>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         {/* Mobile drawer */}
         {mobileOpen && (

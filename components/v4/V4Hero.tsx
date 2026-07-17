@@ -3,12 +3,11 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Circle } from "lucide-react";
 import { CountUpMetric, LiveWaveform } from "./ui/V4Metrics";
+import { V4TrustGauge } from "./ui/V4TrustGauge";
 
 const METRICS: { label: string; value: number; suffix: string }[] = [
   { label: "Pace", value: 142, suffix: " wpm" },
-  { label: "Filler Words", value: 2, suffix: "" },
   { label: "Objection Handling", value: 88, suffix: "" },
-  { label: "Trust", value: 61, suffix: " / 100" },
 ];
 
 export function V4Hero() {
@@ -74,7 +73,7 @@ export function V4Hero() {
               </span>
             </div>
 
-            <div className="grid md:grid-cols-[1fr_220px]">
+            <div className="grid md:grid-cols-[1fr_260px]">
               <div className="p-5 space-y-4">
                 <div className="rounded-lg border p-4" style={{ borderColor: "var(--v4-border)", background: "var(--v4-bg-inset)" }}>
                   <p className="v4-eyebrow mb-1.5 opacity-80">Homeowner · skeptical</p>
@@ -94,12 +93,15 @@ export function V4Hero() {
               </div>
 
               <div
-                className="p-5 border-t md:border-t-0 md:border-l space-y-4"
+                className="p-5 border-t md:border-t-0 md:border-l flex flex-col items-center"
                 style={{ borderColor: "var(--v4-border)" }}
               >
-                {METRICS.map((m) => (
-                  <CountUpMetric key={m.label} {...m} />
-                ))}
+                <V4TrustGauge trust={61} irritation={18} />
+                <div className="grid grid-cols-2 gap-4 w-full mt-1 pt-4 border-t" style={{ borderColor: "var(--v4-border)" }}>
+                  {METRICS.map((m) => (
+                    <CountUpMetric key={m.label} {...m} />
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>

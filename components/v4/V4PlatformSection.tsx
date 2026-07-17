@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 
 const TRANSCRIPT = [
@@ -131,16 +132,24 @@ export function V4PlatformSection() {
                   );
                 })}
               </div>
-              <div className="p-6 border-t md:border-t-0 md:border-l space-y-5" style={{ borderColor: "var(--v4-border)" }}>
-                <div key={active.metric}>
-                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: "var(--v4-text-tertiary)" }}>
-                    {active.metric}
-                  </p>
-                  <p className="text-2xl font-semibold tabular-nums">{active.score}</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--v4-green)" }}>
-                    {active.note}
-                  </p>
-                </div>
+              <div className="p-6 border-t md:border-t-0 md:border-l space-y-5 overflow-hidden" style={{ borderColor: "var(--v4-border)" }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={active.metric}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: "var(--v4-text-tertiary)" }}>
+                      {active.metric}
+                    </p>
+                    <p className="text-2xl font-semibold tabular-nums">{active.score}</p>
+                    <p className="text-xs mt-1" style={{ color: "var(--v4-green)" }}>
+                      {active.note}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
                 <div className="h-px" style={{ background: "var(--v4-border)" }} />
                 <div>
                   <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: "var(--v4-text-tertiary)" }}>

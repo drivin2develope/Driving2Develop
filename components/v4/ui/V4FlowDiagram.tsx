@@ -1,4 +1,5 @@
 import { ArrowRight, type LucideIcon } from "lucide-react";
+import { V4Reveal } from "./V4Reveal";
 
 export interface FlowNode {
   icon: LucideIcon;
@@ -23,20 +24,22 @@ export function V4FlowDiagram({ nodes }: { nodes: FlowNode[] }) {
         const built = node.built ?? true;
         return (
           <div key={node.label} className="flex items-center md:flex-1 min-w-[180px]">
-            <div
-              className="v4-diagram-node p-5 flex-1"
-              style={{ opacity: built ? 1 : 0.6, borderStyle: built ? "solid" : "dashed" }}
-            >
-              <Icon size={18} style={{ color: built ? "var(--v4-gold-b)" : "var(--v4-text-tertiary)" }} />
-              <p className="text-sm font-medium mt-3">{node.label}</p>
-              <p className="text-xs mt-1" style={{ color: "var(--v4-text-secondary)" }}>
-                {node.desc}
-              </p>
-            </div>
-            {i < nodes.length - 1 && (
-              <div className="hidden md:flex items-center justify-center w-10 shrink-0">
-                <ArrowRight size={16} style={{ color: "var(--v4-text-tertiary)" }} />
+            <V4Reveal index={i} y={20} className="flex-1">
+              <div
+                className="v4-diagram-node p-5 h-full transition-colors hover:border-[var(--v4-gold-b)]"
+                style={{ opacity: built ? 1 : 0.6, borderStyle: built ? "solid" : "dashed" }}
+              >
+                <Icon size={18} style={{ color: built ? "var(--v4-gold-b)" : "var(--v4-text-tertiary)" }} />
+                <p className="text-sm font-medium mt-3">{node.label}</p>
+                <p className="text-xs mt-1" style={{ color: "var(--v4-text-secondary)" }}>
+                  {node.desc}
+                </p>
               </div>
+            </V4Reveal>
+            {i < nodes.length - 1 && (
+              <V4Reveal index={i + 0.5} className="hidden md:flex items-center justify-center w-10 shrink-0" y={0}>
+                <ArrowRight size={16} style={{ color: "var(--v4-text-tertiary)" }} />
+              </V4Reveal>
             )}
           </div>
         );

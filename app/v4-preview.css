@@ -94,8 +94,27 @@
 }
 
 .v4-gold-fill {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--v4-gold-c) 0%, var(--v4-gold-b) 55%, var(--v4-gold-a) 100%);
   color: var(--v4-gold-ink);
+}
+.v4-gold-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s var(--v4-ease);
+  pointer-events: none;
+}
+.v4-gold-fill:hover::after {
+  transform: translateX(120%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .v4-gold-fill::after {
+    display: none;
+  }
 }
 
 .v4-gold-text {
