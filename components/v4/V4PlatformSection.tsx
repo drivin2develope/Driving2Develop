@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, ExternalLink } from "lucide-react";
+import { V4ScoreGauge } from "./ui/V4Arc";
 
 const TRANSCRIPT = [
   { speaker: "Rep", text: "Hi there, my name is Alex — I'm with the neighborhood solar program.", tag: null, evidence: null },
@@ -141,11 +142,8 @@ export function V4PlatformSection() {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: "var(--v4-text-tertiary)" }}>
-                      {active.metric}
-                    </p>
-                    <p className="text-2xl font-semibold tabular-nums">{active.score}</p>
-                    <p className="text-xs mt-1" style={{ color: "var(--v4-green)" }}>
+                    <V4ScoreGauge value={active.score} label={active.metric} radius={54} size="w-[150px]" />
+                    <p className="text-xs mt-2 text-center" style={{ color: "var(--v4-green)" }}>
                       {active.note}
                     </p>
                   </motion.div>

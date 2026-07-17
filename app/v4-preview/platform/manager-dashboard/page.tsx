@@ -10,6 +10,8 @@ import { V4Badge } from "@/components/v4/ui/V4Badge";
 import { V4FlowDiagram } from "@/components/v4/ui/V4FlowDiagram";
 import { V4DataGrid } from "@/components/v4/ui/V4DataGrid";
 import { V4MoatGrid } from "@/components/v4/ui/V4MoatGrid";
+import { V4ScoreGauge } from "@/components/v4/ui/V4Arc";
+import { TrendingDown } from "lucide-react";
 import { RelatedCapabilities } from "@/components/v4/RelatedCapabilities";
 import { useV4Theme } from "@/components/v4/useV4Theme";
 
@@ -43,18 +45,31 @@ export default function ManagerDashboardPage() {
       <main id="main-content">
         <section className="relative overflow-hidden" style={{ background: "var(--v4-bg)" }}>
           <div className="absolute inset-0 v4-grid-bg opacity-[0.35]" aria-hidden="true" />
-          <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 pt-20 pb-4 md:pt-28">
-            <div className="flex items-center gap-3 mb-5">
-              <span className="v4-eyebrow">Manager Operating System</span>
-              <V4Badge status="available" />
+          <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 pt-20 pb-16 md:pt-28">
+            <div className="grid lg:grid-cols-[minmax(0,640px)_260px] gap-10 items-center">
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="v4-eyebrow">Manager Operating System</span>
+                  <V4Badge status="available" />
+                </div>
+                <h1 className="text-[2.6rem] leading-[1.05] md:text-[3.2rem] md:leading-[1.03] font-semibold tracking-tight">
+                  The manager operating system, not another reporting dashboard.
+                </h1>
+                <p className="mt-6 text-base md:text-lg max-w-xl" style={{ color: "var(--v4-text-secondary)" }}>
+                  A needs-attention queue built from evidence, a live skill heat-map across the whole team, and
+                  assignments that route straight to the drill that targets the gap. Try it below.
+                </p>
+              </div>
+              <div
+                className="rounded-xl border p-5 flex flex-col items-center"
+                style={{ borderColor: "var(--v4-border-strong)", background: "var(--v4-bg-raised)" }}
+              >
+                <V4ScoreGauge value={73} label="Team avg score" radius={54} size="w-[150px]" />
+                <div className="flex items-center gap-1.5 text-xs mt-3 pt-3 border-t w-full justify-center" style={{ borderColor: "var(--v4-border)", color: "var(--v4-red)" }}>
+                  <TrendingDown size={13} /> Weakest: Objection Handling
+                </div>
+              </div>
             </div>
-            <h1 className="text-[2.6rem] leading-[1.05] md:text-[3.2rem] md:leading-[1.03] font-semibold tracking-tight max-w-3xl">
-              The manager operating system, not another reporting dashboard.
-            </h1>
-            <p className="mt-6 text-base md:text-lg max-w-xl" style={{ color: "var(--v4-text-secondary)" }}>
-              A needs-attention queue built from evidence, a live skill heat-map across the whole team, and
-              assignments that route straight to the drill that targets the gap. Try it below.
-            </p>
           </div>
         </section>
 
