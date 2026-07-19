@@ -17,7 +17,7 @@ export function EmptyState({
   return (
     <Card className={cn("flex flex-col items-center text-center py-14 px-6", className)}>
       {icon && (
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]">
           {icon}
         </div>
       )}

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { PageHeader, Card, ButtonLink } from "@/components/ui";
-import { highlightTranscript, type EvidenceItem } from "@/lib/analysis";
+import { highlightTranscript } from "@/lib/analysis";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata = { title: "Transcript" };
@@ -10,32 +10,13 @@ export const metadata = { title: "Transcript" };
 export default async function TranscriptPage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const session = await prisma.practiceSession.findUnique({ where: { id: params.id }, include: { user: true, metric: true } });
+  const session = await prisma.practiceSession.findUnique({ where: { id: params.id }, include: { user: true } });
   if (!session) notFound();
   const isOwner = session.userId === user!.id;
   const isManagerOfOwner = user!.role === "MANAGER" && session.user.managerId === user!.id;
   if (!isOwner && !isManagerOfOwner) redirect("/dashboard");
 
   const highlighted = session.transcript ? highlightTranscript(session.transcript) : null;
-  const evidence: EvidenceItem[] = session.metric ? JSON.parse(session.metric.evidenceJson || "[]") : [];
-  // Map each evidence charIndex to the highlighted token whose span contains
-  // it, so that token can carry a real #e-<charIndex> anchor - the same
-  // offsets buildEvidence() computed from this exact transcript string.
-  const anchorForTokenIndex = new Map<number, number>();
-  if (highlighted) {
-    let offset = 0;
-    const remaining = evidence.filter((e) => e.charIndex !== null).map((e) => e.charIndex as number);
-    highlighted.forEach((token, tokenIndex) => {
-      const start = offset;
-      const end = offset + token.text.length;
-      const hitIdx = remaining.findIndex((ci) => ci >= start && ci < end);
-      if (hitIdx !== -1) {
-        anchorForTokenIndex.set(tokenIndex, remaining[hitIdx]);
-        remaining.splice(hitIdx, 1);
-      }
-      offset = end;
-    });
-  }
 
   return (
     <div>
@@ -49,24 +30,9 @@ export default async function TranscriptPage({ params }: { params: { id: string 
         <Card>
           {highlighted ? (
             <p className="text-sm leading-loose">
-              {highlighted.map((t, i) => {
-                const anchorCharIndex = anchorForTokenIndex.get(i);
-                const className =
-                  t.type === "filler"
-                    ? "bg-[rgba(248,113,113,0.18)] text-[var(--color-red)] rounded px-0.5"
-                    : t.type === "keyword"
-                    ? "bg-[rgba(52,211,153,0.18)] text-[var(--color-green)] rounded px-0.5"
-                    : "";
-                return anchorCharIndex !== undefined ? (
-                  <span key={i} id={`e-${anchorCharIndex}`} className={`evidence-anchor ${className}`}>
-                    {t.text}
-                  </span>
-                ) : (
-                  <span key={i} className={className}>
-                    {t.text}
-                  </span>
-                );
-              })}
+              {highlighted.map((t, i) => (
+                <span key={i} className={t.type === "filler" ? "bg-[rgba(248,113,113,0.18)] text-[var(--color-red)] rounded px-0.5" : t.type === "keyword" ? "bg-[rgba(52,211,153,0.18)] text-[var(--color-green)] rounded px-0.5" : ""}>{t.text}</span>
+              ))}
             </p>
           ) : (
             <p className="text-sm text-[var(--color-secondary)]">No transcript recorded for this session.</p>

@@ -51,12 +51,12 @@ export default async function RepDetailPage({ params }: { params: { repId: strin
             <div className="divide-y divide-[var(--color-border)] max-h-[420px] overflow-y-auto">
               {rep.sessions.length === 0 && <p className="px-5 pb-4 text-sm text-[var(--color-secondary)]">No sessions yet.</p>}
               {rep.sessions.map((s) => (
-                <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between px-5 py-3 text-sm hover:bg-[var(--color-border)]">
+                <Link key={s.id} href={`/report/${s.id}`} className="flex items-center justify-between px-5 py-3 text-sm hover:bg-white/5">
                   <div>
                     <p className="font-medium">{s.scenario?.title ?? "Uploaded recording"}</p>
                     <p className="text-xs text-[var(--color-secondary)] mt-0.5">{relativeTime(s.createdAt)} · {formatDuration(s.durationSeconds)} · {s.source}</p>
                   </div>
-                  <span className="text-lg font-semibold text-[var(--color-gold-text)] tabular-nums">{s.metric?.overallScore ?? "—"}</span>
+                  <span className="text-lg font-semibold text-[var(--color-gold)] tabular-nums">{s.metric?.overallScore ?? "—"}</span>
                 </Link>
               ))}
             </div>

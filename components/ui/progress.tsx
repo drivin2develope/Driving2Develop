@@ -44,7 +44,7 @@ export function ProgressRing({
 export function ProgressBar({ value, color = "var(--color-gold)", className }: { value: number; color?: string; className?: string }) {
   const pct = Math.max(0, Math.min(100, value));
   return (
-    <div className={cn("h-2 w-full rounded-full bg-[var(--color-border-strong)] overflow-hidden", className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cn("h-2 w-full rounded-full bg-white/8 overflow-hidden", className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
       <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct}%`, background: color }} />
     </div>
   );

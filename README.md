@@ -1,12 +1,10 @@
-# Driven2Develop
+# Driving2Develop
 
-Driven2Develop helps door-to-door teams practice realistic conversations,
-understand exactly where trust is gained or lost, and turn every weakness
-into the next drill. Reps run live, mic-on roleplays against a reactive
-homeowner practice partner, get a real scorecard on their pace/tone/filler
-words/closing, and jump straight into a targeted drill for their weakest
-skill via **Practice This Moment**. Managers get a team roster, a "needs
-attention" panel, and can assign drills.
+Driving2Develop is an AI-flavored sales training platform for door-to-door reps. Reps
+run live, mic-on roleplays against a scripted homeowner personality, get a
+real scorecard on their pace/tone/filler-words/closing, and drill their
+weakest skill. Managers get a team roster, a "needs attention" panel, and can
+assign drills.
 
 The app spans ~57 distinct routes across a marketing site, auth, a
 step-by-step onboarding flow, the rep app, and a manager cockpit — all built
@@ -40,22 +38,9 @@ reveals, modal/toast enter-exit, and micro-interactions (all gated behind
   volume variation are all computed from that real transcript + real audio
   signal (Web Audio `AnalyserNode`), using the scoring logic in
   `lib/analysis.ts`. Nothing here is a random number.
-- **The homeowner reacts to what you actually say, behind a swappable adapter**
-  (`lib/ai/homeowner.ts`). By default it runs a deterministic rule-based
-  adapter: trust/irritation move based on rapport language, questions asked,
-  and pushiness detected in your live transcript, and the homeowner can end
-  the conversation early if you push too hard. Add an `OPENAI_API_KEY` and it
-  automatically upgrades to a real conversational model (OpenAI chat
-  completions) for the same role, no code changes needed. The UI always
-  discloses which mode is active - never claims a live AI voice when it isn't
-  wired up. Lines are still read aloud via the browser's free
-  `speechSynthesis` API.
-- **Restart Objection** reopens an earlier stage/objection mid-session (the
-  homeowner's conversational state rewinds) without discarding anything
-  already recorded - audio, transcript, timing, and evidence all stay intact.
-- **Practice This Moment** appears next to each coaching tip and the overall
-  scorecard action; it launches a scenario matched to that specific weak
-  skill, not just a generic "redo the scenario" link.
+- **The homeowner is a scripted practice partner**, not a live conversational
+  AI voice model. Its lines are pre-written per scenario and read aloud via
+  the browser's free `speechSynthesis` API. The UI says this explicitly.
 - **Uploaded recordings**: duration, pause detection, and volume come from
   real signal processing (`AudioContext.decodeAudioData` + RMS energy
   envelopes) - genuinely real, not faked. However, there is no bundled
@@ -100,13 +85,12 @@ Then open http://localhost:3000.
 
 | Role    | Email                  | Password      |
 | ------- | ---------------------- | ------------- |
-| Admin   | admin@driven2develop.dev    | password123   |
-| Manager | manager@driven2develop.dev  | password123   |
-| Rep     | rep1@driven2develop.dev     | password123   |
-| Rep     | rep2@driven2develop.dev     | password123   |
-| Rep     | rep3@driven2develop.dev     | password123   |
-| Rep     | rep4@driven2develop.dev     | password123   |
-| Rep     | rep5@driven2develop.dev     | password123   |
+| Manager | manager@driving2develop.dev  | password123   |
+| Rep     | rep1@driving2develop.dev     | password123   |
+| Rep     | rep2@driving2develop.dev     | password123   |
+| Rep     | rep3@driving2develop.dev     | password123   |
+| Rep     | rep4@driving2develop.dev     | password123   |
+| Rep     | rep5@driving2develop.dev     | password123   |
 
 The seed also creates 6 Solar scenarios, 4-8 historical practice sessions per
 rep (mixed live/upload, spread over ~30 days, trending upward), a few
@@ -140,23 +124,6 @@ Every account has a **role** (`REP`, `MANAGER`, or `ADMIN`) and a **status**
   ```
 - `/admin/*` is protected the same way as `/manager/*`: middleware redirects
   anyone without the right role away before the page ever renders.
-
-## Environment variables
-
-This is the complete list - every `process.env.*` reference in the codebase,
-nothing more. (This app does not use NextAuth - there is no
-`NEXTAUTH_SECRET`/`NEXTAUTH_URL`/`AUTH_SECRET`; sessions are custom JWTs
-signed with `JWT_SECRET` via `jose`.)
-
-| Variable          | Required? | Purpose                                                                 | Where                    | How to get a value                                                                 | Redeploy needed after setting? |
-| ------------------ | --------- | ------------------------------------------------------------------------ | ------------------------- | ------------------------------------------------------------------------------------ | ------------------------------- |
-| `DATABASE_URL`     | **Yes**   | Prisma connection string. `file:./dev.db` locally; a real Postgres URL in production (see below). | Preview + Production, distinct values | Your Postgres provider's dashboard (Vercel Postgres, Neon, etc.) - use a **pooled** connection string if the provider offers one, since Vercel functions are serverless. | Yes |
-| `JWT_SECRET`       | **Yes**   | Signs/verifies the session cookie (`lib/auth.ts`). If unset, every authenticated request throws and the app is entirely unusable - not a partial failure. | Preview + Production, can share or differ | Generate your own: `openssl rand -base64 32`. Never reuse the local dev placeholder in `.env.example`. | Yes |
-| `OPENAI_API_KEY`   | No        | Optional upgrade: real Whisper transcription for uploads, and a real conversational AI homeowner instead of the rule-based one (`lib/stt.ts`, `lib/ai/homeowner.ts`). App works without it - just the honest, deterministic fallback instead. | Preview + Production if you want the upgrade in both | Your OpenAI account's API keys page. | Yes |
-| `NODE_ENV`         | N/A       | Set automatically by Next.js/Vercel (`production` in deployed environments). Controls the `secure` cookie flag. Never set this manually. | n/a | n/a | n/a |
-
-Never paste an actual secret value into chat, a commit, or a file tracked by
-git - only variable *names* belong in documentation or in conversation.
 
 ## Deploying to production (Vercel + Postgres)
 
@@ -244,7 +211,7 @@ production needs a real Postgres database.
 ## Connecting a GoDaddy domain
 
 1. In your Vercel project, go to **Settings -> Domains** and add your domain
-   (e.g. `driven2develop.yourcompany.com` or the bare `yourcompany.com`).
+   (e.g. `driving2develop.yourcompany.com` or the bare `yourcompany.com`).
 2. In GoDaddy, open **My Products -> DNS -> Manage** for that domain.
 3. Add these records (default TTL is fine):
    - **A record**, host `@`, points to `76.76.21.21`

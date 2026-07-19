@@ -23,12 +23,12 @@ export default async function ObjectionsPage() {
                   <Link href={`/objections/${o.slug}`} className="block h-full">
                     <Card className="h-full flex flex-col hover:border-[var(--color-border-strong)] transition-colors">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)] shrink-0"><ShieldQuestion size={17} /></span>
+                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)] shrink-0"><ShieldQuestion size={17} /></span>
                         <Badge color={DIFF[o.difficulty]}>{o.difficulty}</Badge>
                       </div>
                       <h3 className="font-medium text-sm mt-3">{o.title}</h3>
                       <p className="text-xs text-[var(--color-secondary)] mt-1.5 line-clamp-2 flex-1">{o.summary}</p>
-                      <span className="text-xs text-[var(--color-gold-text)] mt-3 inline-flex items-center gap-1">See the play <ArrowRight size={13} /></span>
+                      <span className="text-xs text-[var(--color-gold)] mt-3 inline-flex items-center gap-1">See the play <ArrowRight size={13} /></span>
                     </Card>
                   </Link>
                 </StaggerItem>

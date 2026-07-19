@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownTrigger, DropdownContent, DropdownItem, DropdownS
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function Sidebar({ user }: { user: { name: string; email: string; role: "REP" | "MANAGER" | "ADMIN" } }) {
+export function Sidebar({ user }: { user: { name: string; email: string; role: "REP" | "MANAGER" } }) {
   const pathname = usePathname();
   const router = useRouter();
   const groups = navGroupsFor(user.role);
@@ -61,8 +61,8 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: "
                         className={cn(
                           "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors border-l-2",
                           active
-                            ? "bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)] border-[var(--color-gold)] font-medium"
-                            : "text-[var(--color-secondary)] border-transparent hover:bg-[var(--color-border)] hover:text-[var(--color-primary)]"
+                            ? "bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)] border-[var(--color-gold)] font-medium"
+                            : "text-[var(--color-secondary)] border-transparent hover:bg-white/5 hover:text-[var(--color-primary)]"
                         )}
                       >
                         <Icon size={17} strokeWidth={active ? 2.25 : 1.75} />
@@ -79,11 +79,11 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: "
       <div className="border-t border-[var(--color-border)] p-3">
         <DropdownMenu>
           <DropdownTrigger asChild>
-            <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 hover:bg-[var(--color-border)] transition-colors text-left">
+            <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/5 transition-colors text-left">
               <Avatar name={user.name} size={32} />
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-medium truncate">{user.name}</span>
-                <span className="block text-xs text-[var(--color-secondary)] truncate">{user.role === "ADMIN" ? "Admin" : user.role === "MANAGER" ? "Manager" : "Rep"}</span>
+                <span className="block text-xs text-[var(--color-secondary)] truncate">{user.role === "MANAGER" ? "Manager" : "Rep"}</span>
               </span>
               <ChevronDown size={15} className="text-[var(--color-secondary)]" />
             </button>

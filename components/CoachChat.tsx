@@ -34,7 +34,7 @@ export function CoachChat({ intro, suggestions, persona = "coach" }: { intro: st
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
               className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${m.role === "coach" ? "bg-[rgba(227,179,65,0.12)] text-[var(--color-gold-text)]" : "bg-[var(--color-border)] text-[var(--color-secondary)]"}`}>
+              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${m.role === "coach" ? "bg-[rgba(227,179,65,0.12)] text-[var(--color-gold)]" : "bg-white/5 text-[var(--color-secondary)]"}`}>
                 {m.role === "coach" ? <Bot size={16} /> : <User size={16} />}
               </span>
               <div className={`rounded-xl px-4 py-3 text-sm max-w-[80%] ${m.role === "coach" ? "bg-[var(--color-surface)] border border-[var(--color-border)]" : "bg-[rgba(227,179,65,0.1)] text-[var(--color-primary)]"}`}>
@@ -53,7 +53,7 @@ export function CoachChat({ intro, suggestions, persona = "coach" }: { intro: st
         <div className="flex flex-wrap gap-2">
           {remaining.map((s) => (
             <button key={s.id} onClick={() => ask(s)}
-              className="text-sm px-3.5 py-2 rounded-full border border-[var(--color-border-strong)] text-[var(--color-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-primary)] transition-colors">
+              className="text-sm px-3.5 py-2 rounded-full border border-[var(--color-border-strong)] text-[var(--color-secondary)] hover:bg-white/5 hover:text-[var(--color-primary)] transition-colors">
               {s.label}
             </button>
           ))}

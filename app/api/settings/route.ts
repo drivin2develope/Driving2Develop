@@ -26,7 +26,7 @@ export async function PATCH(request: NextRequest) {
   });
 
   if (data.role && data.role !== user.role) {
-    const token = await signSession({ userId: updated.id, role: updated.role as "REP" | "MANAGER" | "ADMIN" });
+    const token = await signSession({ userId: updated.id, role: updated.role as "REP" | "MANAGER" });
     await setSessionCookie(token);
   }
 

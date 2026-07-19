@@ -20,13 +20,6 @@ datasource db {
 enum Role {
   REP
   MANAGER
-  ADMIN
-}
-
-enum UserStatus {
-  PENDING
-  ACTIVE
-  SUSPENDED
 }
 
 enum Difficulty {
@@ -58,16 +51,16 @@ enum AssignmentStatus {
 }
 
 model User {
-  id              String     @id @default(cuid())
-  email           String     @unique
-  passwordHash    String
-  name            String
-  role            Role       @default(REP)
-  status          UserStatus @default(ACTIVE)
-  industry        String?
-  experienceLevel String?
-  goal            String?
-  createdAt       DateTime   @default(now())
+  id               String   @id @default(cuid())
+  email            String   @unique
+  passwordHash     String
+  name             String
+  role             Role     @default(REP)
+  status           UserStatus @default(ACTIVE)
+  industry         String?
+  experienceLevel  String?
+  goal             String?
+  createdAt        DateTime @default(now())
 
   managerId String?
   manager   User?   @relation("ManagerToReps", fields: [managerId], references: [id])
@@ -120,25 +113,25 @@ model Metric {
   sessionId String          @unique
   session   PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  wordsPerMinute        Float      @default(0)
-  paceVariance          Float      @default(0)
-  fillerWordCount       Int        @default(0)
-  fillerWordRate        Float      @default(0)
-  pauseCount            Int        @default(0)
-  avgPauseLengthMs      Float      @default(0)
-  volumeVariation       Float      @default(0)
-  monotoneScore         Float      @default(0)
-  talkListenRatio       Float      @default(0)
-  clarityScore          Float      @default(0)
-  keywordAdherenceScore Float      @default(0)
-  objectionHandledScore Float?
-  closingStrengthScore  Float      @default(0)
-  confidenceScore       Float      @default(0)
-  overallScore          Float      @default(0)
-  transcriptConfidence  Confidence @default(HIGH)
-  tipsJson              String     @default("[]")
-  paceTimelineJson      String     @default("[]")
-  evidenceJson          String     @default("[]")
+  wordsPerMinute         Float    @default(0)
+  paceVariance           Float    @default(0)
+  fillerWordCount        Int      @default(0)
+  fillerWordRate         Float    @default(0)
+  pauseCount             Int      @default(0)
+  avgPauseLengthMs       Float    @default(0)
+  volumeVariation        Float    @default(0)
+  monotoneScore          Float    @default(0)
+  talkListenRatio        Float    @default(0)
+  clarityScore           Float    @default(0)
+  keywordAdherenceScore  Float    @default(0)
+  objectionHandledScore  Float?
+  closingStrengthScore   Float    @default(0)
+  confidenceScore        Float    @default(0)
+  overallScore           Float    @default(0)
+  transcriptConfidence   Confidence @default(HIGH)
+  tipsJson               String   @default("[]")
+  paceTimelineJson       String   @default("[]")
+  evidenceJson           String   @default("[]")
 
   @@index([sessionId])
 }

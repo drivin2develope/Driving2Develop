@@ -18,7 +18,7 @@ export default function HowItWorksPage() {
       <Section className="pb-8 space-y-4">
         {STEPS.map((s, i) => (
           <FadeIn key={s.title} delay={i * 0.05} className="card p-6 flex gap-5 items-start">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold-text)]"><s.icon size={20} /></div>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(227,179,65,0.1)] text-[var(--color-gold)]"><s.icon size={20} /></div>
             <div>
               <h3 className="font-medium text-lg">{s.title}</h3>
               <p className="text-[var(--color-secondary)] mt-1.5 leading-relaxed">{s.body}</p>

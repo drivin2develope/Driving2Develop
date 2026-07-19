@@ -8,7 +8,7 @@ import { Search, CornerDownLeft } from "lucide-react";
 import { navGroupsFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function SearchTrigger({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
+export function SearchTrigger({ role }: { role: "REP" | "MANAGER" }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function SearchTrigger({ role }: { role: "REP" | "MANAGER" | "ADMIN" }) {
   );
 }
 
-function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER" | "ADMIN"; open: boolean; onOpenChange: (o: boolean) => void }) {
+function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER"; open: boolean; onOpenChange: (o: boolean) => void }) {
   const router = useRouter();
   const reduce = useReducedMotion();
   const [query, setQuery] = useState("");
@@ -102,7 +102,7 @@ function CommandPalette({ role, open, onOpenChange }: { role: "REP" | "MANAGER" 
                         <button
                           onClick={() => go(r.href)}
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-primary)]"
+                            "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-secondary)] hover:bg-white/5 hover:text-[var(--color-primary)]"
                           )}
                         >
                           <Icon size={16} />

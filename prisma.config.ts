@@ -2,7 +2,7 @@ import "dotenv/config";
 import { defineConfig } from "prisma/config";
 import { createPrismaAdapter } from "./lib/prisma-adapter";
 
-// Driven2Develop uses Prisma's engine-less "js" engine (driver adapters) so that no
+// Driving2Develop uses Prisma's engine-less "js" engine (driver adapters) so that no
 // native Rust engine binary needs to be downloaded at install/build time.
 // This picks the Prisma CLI's (generate/migrate/studio) adapter from
 // DATABASE_URL via the same shared helper the runtime client and seed script

@@ -2,39 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Design tokens - warm/light by default (Section 4 of the V2 rebuild spec).
- * Everything in this file cascades through CSS custom properties, so this
- * single block re-themes the whole app. Two exceptions, both intentional:
- *   - [data-theme="dark"] below (user-selected Dark theme)
- *   - .practice-dark (scoped to the active roleplay screen only, Section 4's
- *     "active roleplay exception" - never bleeds into the rest of the app)
- */
 :root {
-  --color-base: #f8f6f0;
-  --color-surface: #f2efe6;
-  --color-elevated: #fffdfc;
-  --color-elevated-2: #faf7f1;
-  --color-border: rgba(21, 21, 21, 0.08);
-  --color-border-strong: rgba(21, 21, 21, 0.16);
-  --color-primary: #151515;
-  --color-secondary: #55595e;
-  --color-disabled: #9a9ea4;
-  --color-gold: #e5a928;
-  --color-gold-text: #8f630f;
-  --color-gold-ink: #1a1300;
-  --color-green: #1e7a4f;
-  --color-red: #c0392b;
-  --color-orange: #d9601f;
-  --color-blue: #2f5fc4;
-  --color-purple: #6b3fd6;
-  --color-navy: #172033;
-  --color-navy-ink: #f5f3ee;
-  --nav-blur-bg: rgba(248, 246, 240, 0.78);
-  color-scheme: light;
-}
-
-:root[data-theme="dark"] {
   --color-base: #0a0a0b;
   --color-surface: #141416;
   --color-elevated: #1c1c1f;
@@ -45,45 +13,12 @@
   --color-secondary: #9ca0a6;
   --color-disabled: #5a5a5e;
   --color-gold: #e3b341;
-  --color-gold-text: #e3b341;
   --color-gold-ink: #14110a;
   --color-green: #34d399;
   --color-red: #f87171;
   --color-orange: #fb923c;
   --color-blue: #60a5fa;
   --color-purple: #a78bfa;
-  --color-navy: #172033;
-  --color-navy-ink: #f5f3ee;
-  --nav-blur-bg: rgba(10, 10, 11, 0.78);
-  color-scheme: dark;
-}
-
-/*
- * Active roleplay exception: a dimmer, more focused surface is intentional
- * here (Section 4). Wrap the practice screen's root element in
- * .practice-dark - it does not affect any other page.
- */
-.practice-dark {
-  --color-base: #14171c;
-  --color-surface: #1b1f26;
-  --color-elevated: #20242c;
-  --color-elevated-2: #262b34;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.16);
-  --color-primary: #f5f3ee;
-  --color-secondary: #a3a8b0;
-  --color-disabled: #6a6f78;
-  --color-gold: #e3b341;
-  --color-gold-text: #e3b341;
-  --color-gold-ink: #14110a;
-  --color-green: #34d399;
-  --color-red: #f87171;
-  --color-orange: #fb923c;
-  --color-blue: #60a5fa;
-  --color-purple: #a78bfa;
-  color-scheme: dark;
-  background: var(--color-base);
-  color: var(--color-primary);
 }
 
 * {
@@ -117,18 +52,10 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(21, 21, 21, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(21, 21, 21, 0.24);
-}
-:root[data-theme="dark"] ::-webkit-scrollbar-thumb,
-.practice-dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-}
-:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
-.practice-dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -239,7 +166,7 @@ textarea:focus:not(:focus-visible) {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: rgba(21, 21, 21, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
 }
 .skeleton::after {
@@ -250,32 +177,17 @@ textarea:focus:not(:focus-visible) {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(21, 21, 21, 0.07),
+    rgba(255, 255, 255, 0.06),
     transparent
   );
   animation: shimmer 1.6s infinite;
 }
-:root[data-theme="dark"] .skeleton,
-.practice-dark .skeleton {
-  background: rgba(255, 255, 255, 0.05);
-}
-:root[data-theme="dark"] .skeleton::after,
-.practice-dark .skeleton::after {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
-}
 
 .gold-gradient-text {
-  background: linear-gradient(180deg, #c8952b 0%, #a5730f 60%, #7a5209 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-:root[data-theme="dark"] .gold-gradient-text,
-.practice-dark .gold-gradient-text {
   background: linear-gradient(180deg, #f4d98a 0%, #e3b341 60%, #c8952b 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-glow {
@@ -284,17 +196,6 @@ textarea:focus:not(:focus-visible) {
     rgba(227, 179, 65, 0.12) 0%,
     rgba(227, 179, 65, 0) 70%
   );
-}
-
-/* --- Evidence deep-links (report -> transcript) ------------------------------
- * Scorecard "View in transcript" links point at a real #e-<charIndex>
- * anchor on the transcript page. :target gives a native, JS-free highlight
- * on arrival so the exact cited moment is unmistakable. */
-.evidence-anchor:target {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 2px;
-  border-radius: 4px;
-  scroll-margin-top: 90px;
 }
 
 @media (prefers-reduced-motion: reduce) {

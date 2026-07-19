@@ -17,7 +17,6 @@ import {
   Bot,
   Flag,
   Settings,
-  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -77,13 +76,7 @@ export const SETTINGS_GROUP: NavGroup = {
   ],
 };
 
-export const ADMIN_GROUP: NavGroup = {
-  heading: "Admin",
-  items: [{ href: "/admin/users", label: "Users & Access", icon: ShieldCheck }],
-};
-
-export function navGroupsFor(role: "REP" | "MANAGER" | "ADMIN"): NavGroup[] {
-  if (role === "ADMIN") return [ADMIN_GROUP, SETTINGS_GROUP];
+export function navGroupsFor(role: "REP" | "MANAGER"): NavGroup[] {
   const groups = [...REP_GROUPS];
   if (role === "MANAGER") groups.push(MANAGER_GROUP);
   groups.push(SETTINGS_GROUP);

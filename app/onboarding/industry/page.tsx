@@ -33,10 +33,10 @@ export default function IndustryStep() {
             className={cn("flex items-center justify-between px-4 py-3.5 rounded-xl border text-sm text-left transition-colors",
               !ind.available && "opacity-40 cursor-not-allowed border-[var(--color-border)]",
               ind.available && industry === ind.id && "border-[var(--color-gold)] bg-[rgba(227,179,65,0.08)]",
-              ind.available && industry !== ind.id && "border-[var(--color-border)] hover:bg-[var(--color-border)]")}>
+              ind.available && industry !== ind.id && "border-[var(--color-border)] hover:bg-white/5")}>
             {ind.label}
             {!ind.available ? <span className="text-2xs uppercase tracking-wide text-[var(--color-disabled)]">Coming soon</span>
-              : industry === ind.id ? <Check size={16} className="text-[var(--color-gold-text)]" /> : null}
+              : industry === ind.id ? <Check size={16} className="text-[var(--color-gold)]" /> : null}
           </button>
         ))}
       </div>

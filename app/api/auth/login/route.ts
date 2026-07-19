@@ -19,14 +19,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
-  if (user.status === "PENDING") {
-    return NextResponse.json({ error: "Your account is still waiting on admin approval." }, { status: 403 });
-  }
-  if (user.status === "SUSPENDED") {
-    return NextResponse.json({ error: "This account has been suspended. Contact an admin for access." }, { status: 403 });
-  }
-
-  const token = await signSession({ userId: user.id, role: user.role as "REP" | "MANAGER" | "ADMIN" });
+  const token = await signSession({ userId: user.id, role: user.role as "REP" | "MANAGER" });
   await setSessionCookie(token);
 
   return NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role });

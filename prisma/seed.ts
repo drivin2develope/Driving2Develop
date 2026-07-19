@@ -111,11 +111,11 @@ const SCENARIOS: {
 ];
 
 const REPS = [
-  { name: "Maya Chen", email: "rep1@driven2develop.dev" },
-  { name: "Diego Ramirez", email: "rep2@driven2develop.dev" },
-  { name: "Aaliyah Brooks", email: "rep3@driven2develop.dev" },
-  { name: "Noah Kim", email: "rep4@driven2develop.dev" },
-  { name: "Priya Patel", email: "rep5@driven2develop.dev" },
+  { name: "Maya Chen", email: "rep1@driving2develop.dev" },
+  { name: "Diego Ramirez", email: "rep2@driving2develop.dev" },
+  { name: "Aaliyah Brooks", email: "rep3@driving2develop.dev" },
+  { name: "Noah Kim", email: "rep4@driving2develop.dev" },
+  { name: "Priya Patel", email: "rep5@driving2develop.dev" },
 ];
 
 const TRANSCRIPT_SAMPLES = [
@@ -421,27 +421,15 @@ function pickTips(scores: Record<string, number>) {
 }
 
 async function main() {
-  console.log("Seeding Driven2Develop...");
+  console.log("Seeding Driving2Develop...");
 
   const passwordHash = await bcrypt.hash("password123", 10);
 
-  await prisma.user.upsert({
-    where: { email: "admin@driven2develop.dev" },
-    update: {},
-    create: {
-      email: "admin@driven2develop.dev",
-      name: "Site Admin",
-      passwordHash,
-      role: "ADMIN",
-      status: "ACTIVE",
-    },
-  });
-
   const manager = await prisma.user.upsert({
-    where: { email: "manager@driven2develop.dev" },
+    where: { email: "manager@driving2develop.dev" },
     update: {},
     create: {
-      email: "manager@driven2develop.dev",
+      email: "manager@driving2develop.dev",
       name: "Alex Rivera",
       passwordHash,
       role: "MANAGER",
@@ -637,9 +625,8 @@ async function main() {
   }
 
   console.log("Seed complete.");
-  console.log(`Admin: admin@driven2develop.dev / password123`);
-  console.log(`Manager: manager@driven2develop.dev / password123`);
-  console.log(`Reps: rep1@driven2develop.dev ... rep5@driven2develop.dev / password123`);
+  console.log(`Manager: manager@driving2develop.dev / password123`);
+  console.log(`Reps: rep1@driving2develop.dev ... rep5@driving2develop.dev / password123`);
 }
 
 main()

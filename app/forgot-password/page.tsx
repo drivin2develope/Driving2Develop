@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     <AuthShell
       title={sent ? "Check your inbox" : "Reset your password"}
       subtitle={sent ? undefined : "We'll send you a link to set a new password."}
-      footer={<><Link href="/login" className="text-[var(--color-gold-text)] font-medium">Back to sign in</Link></>}
+      footer={<><Link href="/login" className="text-[var(--color-gold)] font-medium">Back to sign in</Link></>}
     >
       {sent ? (
         <div className="text-center py-2">
