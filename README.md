@@ -97,6 +97,34 @@ rep (mixed live/upload, spread over ~30 days, trending upward), a few
 manager-to-rep assignments, a 10-entry objection library, and an 8-entry
 company playbook - so nothing is empty on first login.
 
+## Access control (admin approval, roles, suspension)
+
+Every account has a **role** (`REP`, `MANAGER`, or `ADMIN`) and a **status**
+(`PENDING`, `ACTIVE`, or `SUSPENDED`):
+
+- **New signups require admin approval.** Anyone who signs up through
+  `/signup` is created with status `PENDING` and cannot sign in until an
+  admin approves them - the signup page tells them this explicitly instead
+  of silently failing.
+- **The very first account on a brand-new database is auto-approved as an
+  admin** (there's nobody else yet to approve them). Every signup after that
+  goes through the normal approval queue. The seed script also creates a
+  ready-to-use `admin@driven2develop.dev` account (see table above).
+- **Admins manage everyone** from **Users & Access** (`/admin/users`, linked
+  from the sidebar for admin accounts only): approve a pending signup, grant
+  or change a role, and suspend/reactivate an account - all in one screen.
+  Suspending immediately blocks that account from signing in and from every
+  protected page/API (enforced in `getCurrentUser()`, so no per-route changes
+  were needed). An admin cannot suspend or demote their own account (a
+  guard against accidental lockout).
+- **On an existing production deployment without a seeded admin**, promote
+  an existing account with:
+  ```bash
+  npm run make-admin -- someone@company.com
+  ```
+- `/admin/*` is protected the same way as `/manager/*`: middleware redirects
+  anyone without the right role away before the page ever renders.
+
 ## Deploying to production (Vercel + Postgres)
 
 SQLite's `dev.db` file won't persist on Vercel's serverless filesystem, so
@@ -113,8 +141,15 @@ production needs a real Postgres database.
    postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
    ```
 
-**2. Switch the schema's datasource provider.** In `prisma/schema.prisma`,
-   change:
+**2. Switch the schema's datasource provider.** Run:
+   ```bash
+   npm run db:use-postgres
+   ```
+   This edits `prisma/schema.prisma` and immediately runs `prisma validate`
+   - if the result doesn't validate, the file is restored automatically and
+   nothing broken is left on disk (this replaces the old manual-edit
+   instructions after a hand-edit once reached `main` with a syntax error
+   that broke every build). Equivalent manual edit, if you prefer:
    ```prisma
    datasource db {
      provider = "sqlite"
@@ -128,13 +163,18 @@ production needs a real Postgres database.
      url      = env("DATABASE_URL")
    }
    ```
-   That's the one-line change referenced throughout this repo. `lib/db.ts`
-   already picks `@prisma/adapter-pg` automatically whenever `DATABASE_URL`
-   doesn't start with `file:`, so no other application code needs to change.
-   Also update `prisma.config.ts`'s local `adapter()` if you want CLI commands
-   (like `migrate deploy` from your own machine) to target Postgres too -
-   swap `PrismaBetterSQLite3` for `PrismaPg` there using the same
-   `DATABASE_URL`.
+   That's the one-line change referenced throughout this repo. `lib/db.ts`,
+   `prisma/seed.ts`, and `prisma.config.ts` all pick the right adapter
+   (`@prisma/adapter-pg` vs. `@prisma/adapter-better-sqlite3`) automatically
+   from `DATABASE_URL` via the shared helper in `lib/prisma-adapter.ts` - no
+   other file needs a matching manual edit.
+
+   > **If you edit this by hand instead of via `npm run db:use-postgres`,
+   > run `npm run prisma:validate` before committing.** A hand-edit that
+   > isn't validated before committing is exactly how a single bad keystroke
+   > once turned into a broken build on `main` - `prisma validate` catches a
+   > malformed schema in under a second, with no database connection
+   > required.
 
 **3. Regenerate the client for the new provider:**
    ```bash
